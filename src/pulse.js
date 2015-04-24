@@ -16,25 +16,50 @@
         }
     };
 
-    Pulse.prototype.loadURI = function(uri) {
+    Pulse.prototype.getAudioBufferFromURI = function(uri) {
+
+        if(this.audioContext === null) {
+            return false;
+        }
+
         var self = this,
             request = new XMLHttpRequest();
 
-        request.open("GET", uri, true);
+        request.open("GET", uri, false);
         request.responseType = "arraybuffer";
+        request.send(null);
 
-        request.addEventListener("load", function() {
-            self.audioContext.decodeAudioData(
-                this.response,
-                self.processBpm,
-                function(error) {
-                    alert("Decoding error:" + error);
-                }
-            );
-        }, false);
+        if(request.status === 200) {
+            return request.response;
+        } else {
+            alert("Error getting: " + uri + '(' + request.status + ')');
+            return null;
+        }
 
-        request.send();
+        return true;
     };
+
+    /*Pulse.prototype.get = function() {
+        this.audioContext.decodeAudioData(
+            response,
+            this.processBpm,
+            function(error) {
+                alert("Decoding error:" + error);
+            }
+        );
+    };
+
+    Pulse.prototype.getPeaks = function() {
+        return this._peaks;
+    };
+
+    Pulse.prototype.getSimulatedPeaks = function() {
+        return this._peaks;
+    };
+
+    Pulse.prototype.getPulseTempo44 = function() {
+        return this._peaks;
+    };*/
 
     /*
     Pulse.prototype.processBpm = function(buffer) {
