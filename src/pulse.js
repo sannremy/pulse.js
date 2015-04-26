@@ -73,11 +73,14 @@
         }
     };
 
-    Pulse.prototype.loadBufferFromURI = function(uri) {
+    Pulse.prototype.loadBufferFromURI = function(uri, options) {
 
         if(this.audioContext === null) {
             return false;
         }
+
+        options.onsuccess = options.onsuccess || function() {};
+        options.onerror = options.onerror || function() {};
 
         var self = this,
             request = new XMLHttpRequest();
@@ -86,19 +89,19 @@
         request.responseType = "arraybuffer";
 
         request.addEventListener("progress", function(event) {
-            self.requestProgress(event);
+            self._requestProgress(event);
         }, false);
 
         request.addEventListener("load", function(event) {
-            self.requestLoad(event, this);
+            self._requestLoad(event, this, options);
         }, false);
 
         request.addEventListener("error", function() {
-            self.requestError();
+            self._requestError(event, this, options);
         }, false);
 
         request.addEventListener("abort", function() {
-            self.requestAbort();
+            self._requestAbort();
         }, false);
 
         request.send(null);
@@ -106,27 +109,29 @@
         return true;
     };
 
-    Pulse.prototype.requestProgress = function(event) {
+    Pulse.prototype._requestProgress = function(event) {
         this.status = this.REQUEST_PROGRESS;
         if(event.lengthComputable) {
             //console.log(event.loaded + ' / ' + event.total);
         }
     };
 
-    Pulse.prototype.requestLoad = function(event, request, callback) {
+    Pulse.prototype._requestLoad = function(event, request, options) {
         if(request.status === 200) {
             this.buffer = request.response;
             this.status = this.REQUEST_LOAD;
+            options.onsuccess(this);
         } else {
-            this.requestError();
+            this._requestError(event, request, options);
         }
     };
 
-    Pulse.prototype.requestError = function() {
+    Pulse.prototype._requestError = function(event, request, options) {
         this.status = this.REQUEST_ERROR;
+        options.onerror(request);
     };
 
-    Pulse.prototype.requestAbort = function() {
+    Pulse.prototype._requestAbort = function() {
         this.status = this.REQUEST_ABORT;
     };
 
