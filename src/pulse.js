@@ -2,7 +2,10 @@
 
     "use strict";
 
-    var Pulse = function() {
+    var self,
+    Pulse = function() {
+
+        self = this;
 
         this.audioContext = this.getAudioContext();
         this.buffer = null;
@@ -13,8 +16,7 @@
         this.REQUEST_ERROR = 1102;
         this.REQUEST_ABORT = 104;
 
-        var self = this,
-            notifier = Object.getNotifier(this);
+        var notifier = Object.getNotifier(this);
 
         Object.defineProperty(this, 'status', {
             get: function() {
@@ -82,8 +84,7 @@
         options.onsuccess = options.onsuccess || function() {};
         options.onerror = options.onerror || function() {};
 
-        var self = this,
-            request = new XMLHttpRequest();
+        var request = new XMLHttpRequest();
 
         request.open("GET", uri, true);
         request.responseType = "arraybuffer";
@@ -133,6 +134,42 @@
 
     Pulse.prototype._requestAbort = function() {
         this.status = this.REQUEST_ABORT;
+    };
+
+    Pulse.prototype.process = function() {
+        this.audioContext.decodeAudioData(
+            this.buffer,
+            this.processBpm,
+            function(error) {
+                self.status = self.DECODING_ERROR;
+            }
+        );
+    };
+
+    Pulse.prototype.getOfflineContext = function(buffer) {
+        var offlineContext = new global.OfflineAudioContext(1, buffer.length, buffer.sampleRate),
+            source = offlineContext.createBufferSource(),
+            filter = offlineContext.createBiquadFilter();
+
+        source.buffer = buffer;
+        filter.type = "lowpass";
+
+        source.connect(filter);
+        filter.connect(offlineContext.destination);
+
+        source.start(0);
+        return offlineContext;
+    };
+
+    Pulse.prototype.processBpm = function(buffer) {
+
+        var offlineContext = self.getOfflineContext(buffer);
+        
+        offlineContext.oncomplete = function(event) {
+
+        };
+
+        offlineContext.startRendering();
     };
 
     /*Pulse.prototype.get = function() {
