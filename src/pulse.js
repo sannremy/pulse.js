@@ -3,7 +3,64 @@
     "use strict";
 
     var Pulse = function() {
+
         this.audioContext = this.getAudioContext();
+        this.buffer = null;
+
+        this.WEB_AUDIO_API_NOT_SUPPORTED = 1001;
+        this.REQUEST_PROGRESS = 101;
+        this.REQUEST_LOAD = 102;
+        this.REQUEST_ERROR = 1102;
+        this.REQUEST_ABORT = 104;
+
+        var self = this,
+            notifier = Object.getNotifier(this);
+
+        Object.defineProperty(this, 'status', {
+            get: function() {
+                return parseInt(status, 10);
+            },
+            set: function(s) {
+                if (s === status) {
+                    return;
+                }
+
+                notifier.notify({
+                    type: 'update',
+                    name: 'status'
+                });
+
+                status = s;
+            }
+        });
+
+        Object.observe(this, function(changes) {
+            switch(self.status) {
+                case self.WEB_AUDIO_API_NOT_SUPPORTED :
+                    console.error("WEB_AUDIO_API_NOT_SUPPORTED");
+                break;
+
+                case self.REQUEST_PROGRESS :
+                    console.log("REQUEST_PROGRESS");
+                break;
+
+                case self.REQUEST_LOAD :
+                    console.log("REQUEST_LOAD");
+                break;
+
+                case self.REQUEST_ERROR :
+                    console.error("REQUEST_ERROR");
+                break;
+
+                case self.REQUEST_ABORT :
+                    console.error("REQUEST_ABORT");
+                break;
+
+                default :
+                    console.error("STATUS NOT IMPLEMENTED");
+                break;
+            }
+        });
     };
 
     Pulse.prototype.getAudioContext = function() {
@@ -11,12 +68,12 @@
             global.AudioContext = global.AudioContext || global.webkitAudioContext;
             return new global.AudioContext();
         } catch(e) {
-            alert("Web Audio API is not supported in this browser.");
+            this.status = this.WEB_AUDIO_API_NOT_SUPPORTED;
             return null;
         }
     };
 
-    Pulse.prototype.getAudioBufferFromURI = function(uri) {
+    Pulse.prototype.loadBufferFromURI = function(uri) {
 
         if(this.audioContext === null) {
             return false;
@@ -25,18 +82,52 @@
         var self = this,
             request = new XMLHttpRequest();
 
-        request.open("GET", uri, false);
+        request.open("GET", uri, true);
         request.responseType = "arraybuffer";
+
+        request.addEventListener("progress", function(event) {
+            self.requestProgress(event);
+        }, false);
+
+        request.addEventListener("load", function(event) {
+            self.requestLoad(event, this);
+        }, false);
+
+        request.addEventListener("error", function() {
+            self.requestError();
+        }, false);
+
+        request.addEventListener("abort", function() {
+            self.requestAbort();
+        }, false);
+
         request.send(null);
 
-        if(request.status === 200) {
-            return request.response;
-        } else {
-            alert("Error getting: " + uri + '(' + request.status + ')');
-            return null;
-        }
-
         return true;
+    };
+
+    Pulse.prototype.requestProgress = function(event) {
+        this.status = this.REQUEST_PROGRESS;
+        if(event.lengthComputable) {
+            //console.log(event.loaded + ' / ' + event.total);
+        }
+    };
+
+    Pulse.prototype.requestLoad = function(event, request, callback) {
+        if(request.status === 200) {
+            this.buffer = request.response;
+            this.status = this.REQUEST_LOAD;
+        } else {
+            this.requestError();
+        }
+    };
+
+    Pulse.prototype.requestError = function() {
+        this.status = this.REQUEST_ERROR;
+    };
+
+    Pulse.prototype.requestAbort = function() {
+        this.status = this.REQUEST_ABORT;
     };
 
     /*Pulse.prototype.get = function() {
@@ -291,5 +382,7 @@
         };
     };
     */
+
+    global.Pulse = Pulse;
 
 }(window));
