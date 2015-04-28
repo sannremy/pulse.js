@@ -161,15 +161,59 @@
         return offlineContext;
     };
 
-    Pulse.prototype.processBpm = function(buffer) {
+    Pulse.prototype.processBpm = function() {
 
-        var offlineContext = self.getOfflineContext(buffer);
-        
+        var offlineContext = self.getOfflineContext(self.buffer);
+
         offlineContext.oncomplete = function(event) {
 
         };
 
         offlineContext.startRendering();
+    };
+
+    Pulse.prototype.getChannelDataMinMax = function(channelData) {
+        var length = channelData.length,
+            min = channelData[0],
+            max = channelData[0],
+            j;
+
+        for(j = 1; j < length; j++) {
+            min = Math.min(min, channelData[j]);
+            max = Math.max(max, channelData[j]);
+        }
+    };
+
+    Pulse.prototype.getPeaks = function(event) {
+
+        var channelData = event.renderedBuffer.getChannelData(0),
+            limit = this.getChannelDataMinMax(channelData),
+            intervalMin = 230, // ms, max tempo = 260 bpm
+            amplitude = Math.abs(limit.min) + Math.abs(limit.max),
+            maxThreshold = limit.min + amplitude * 0.9, // 90% uppest beats
+            minThreshold = limit.min + amplitude * 0.3, // 30% uppest beats
+            threshold = maxThreshold,
+            acuracy = event.renderedBuffer.sampleRate * (intervalMin / 1000);
+            peakFilter = [];
+
+        // grab peaks
+        while (threshold >= minThreshold && peakFilter.length <= parseInt(this.buffer.duration, 10)) {
+            j = 0;
+            for(; j < length; j++) {
+                if (channelData[j] > threshold) {
+                    peakFilter.push(j);
+
+                    j += acuracy;
+                }
+            }
+            threshold -= 0.05; // -5% every interation
+        }
+
+        peakFilter.sort(function(a, b) {
+            return a - b;
+        });
+
+        return peakFilter;
     };
 
     /*Pulse.prototype.get = function() {
