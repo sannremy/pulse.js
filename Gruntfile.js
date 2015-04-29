@@ -14,12 +14,21 @@ module.exports = function(grunt) {
                     'pulse.min.js': ['src/**/*.js']
                 }
             }
+        },
+        jsdoc: {
+            dist: {
+                src: ['src/*.js'],
+                    options: {
+                    destination: 'doc'
+                }
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-jsdoc');
 
-    grunt.registerTask('default', ['jshint', 'uglify']);
+    grunt.registerTask('default', ['jshint', 'uglify', 'jsdoc']);
 };
