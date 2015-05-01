@@ -33,15 +33,14 @@
                 return parseInt(status, 10);
             },
             set: function(s) {
-                console.log(s, status);
                 if (s == status) {
-                    console.log('same')
                     return;
                 }
 
                 notifier.notify({
                     type: 'update',
-                    name: 'status'
+                    name: 'status',
+                    oldValue: s
                 });
 
                 status = s;
@@ -49,31 +48,38 @@
         });
 
         Object.observe(this, function(changes) {
-            console.log(self.status)
-            switch(self.status) {
-                case self.WEB_AUDIO_API_NOT_SUPPORTED :
-                    console.error("WEB_AUDIO_API_NOT_SUPPORTED");
-                break;
+            for(var i = 0; i < changes.length; i++) {
+                if(
+                    changes[i].type === 'update' &&
+                    changes[i].name === 'status' &&
+                    changes[i].lastValue != self.status
+                ) {
+                    switch(self.status) {
+                        case self.WEB_AUDIO_API_NOT_SUPPORTED :
+                            console.error("WEB_AUDIO_API_NOT_SUPPORTED");
+                        break;
 
-                case self.REQUEST_PROGRESS :
-                    console.log("REQUEST_PROGRESS");
-                break;
+                        case self.REQUEST_PROGRESS :
+                            console.log("REQUEST_PROGRESS");
+                        break;
 
-                case self.REQUEST_LOAD :
-                    console.log("REQUEST_LOAD");
-                break;
+                        case self.REQUEST_LOAD :
+                            console.log("REQUEST_LOAD");
+                        break;
 
-                case self.REQUEST_ERROR :
-                    console.error("REQUEST_ERROR");
-                break;
+                        case self.REQUEST_ERROR :
+                            console.error("REQUEST_ERROR");
+                        break;
 
-                case self.REQUEST_ABORT :
-                    console.error("REQUEST_ABORT");
-                break;
+                        case self.REQUEST_ABORT :
+                            console.error("REQUEST_ABORT");
+                        break;
 
-                default :
-                    console.error("STATUS NOT IMPLEMENTED");
-                break;
+                        default :
+                            console.error("STATUS NOT IMPLEMENTED");
+                        break;
+                    }
+                }
             }
         });
     };
@@ -142,7 +148,6 @@
     };
 
     Pulse.prototype._requestLoad = function(event, request, options) {
-        console.log(request);
         if(request.readyState === request.DONE) {
             this.buffer = request.response;
             this.status = this.REQUEST_LOAD;
@@ -192,6 +197,7 @@
 
         offlineContext.oncomplete = function(event) {
             self.peaks = self.getPeaks(event);
+            console.log(self.peaks);
         };
 
         offlineContext.startRendering();
@@ -224,10 +230,16 @@
             minThreshold = limit.min + amplitude * 0.3, // 30% uppest beats
             threshold = maxThreshold,
             acuracy = event.renderedBuffer.sampleRate * (intervalMin / 1000),
-            peakFilter = [];
+            peakFilter = [],
+            duration = parseInt(event.renderedBuffer.duration, 10),
+            length = channelData.length,
+            j;
 
         // grab peaks
-        while (threshold >= minThreshold && peakFilter.length <= parseInt(this.buffer.duration, 10)) {
+        while (
+            threshold >= minThreshold &&
+            peakFilter.length <= duration
+        ) {
             j = 0;
             for(; j < length; j++) {
                 if (channelData[j] > threshold) {
