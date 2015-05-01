@@ -33,7 +33,9 @@
                 return parseInt(status, 10);
             },
             set: function(s) {
-                if (s === status) {
+                console.log(s, status);
+                if (s == status) {
+                    console.log('same')
                     return;
                 }
 
@@ -47,6 +49,7 @@
         });
 
         Object.observe(this, function(changes) {
+            console.log(self.status)
             switch(self.status) {
                 case self.WEB_AUDIO_API_NOT_SUPPORTED :
                     console.error("WEB_AUDIO_API_NOT_SUPPORTED");
@@ -132,13 +135,15 @@
 
     Pulse.prototype._requestProgress = function(event) {
         this.status = this.REQUEST_PROGRESS;
+
         if(event.lengthComputable) {
             //console.log(event.loaded + ' / ' + event.total);
         }
     };
 
     Pulse.prototype._requestLoad = function(event, request, options) {
-        if(request.status === 200) {
+        console.log(request);
+        if(request.readyState === request.DONE) {
             this.buffer = request.response;
             this.status = this.REQUEST_LOAD;
             options.onsuccess(this);
@@ -181,12 +186,12 @@
         return offlineContext;
     };
 
-    Pulse.prototype.processBpm = function() {
+    Pulse.prototype.processBpm = function(buffer) {
 
-        var offlineContext = self.getOfflineContext(self.buffer);
+        var offlineContext = self.getOfflineContext(buffer);
 
         offlineContext.oncomplete = function(event) {
-
+            self.peaks = self.getPeaks(event);
         };
 
         offlineContext.startRendering();
@@ -202,6 +207,11 @@
             min = Math.min(min, channelData[j]);
             max = Math.max(max, channelData[j]);
         }
+
+        return {
+            min: min,
+            max: max
+        };
     };
 
     Pulse.prototype.getPeaks = function(event) {
@@ -213,7 +223,7 @@
             maxThreshold = limit.min + amplitude * 0.9, // 90% uppest beats
             minThreshold = limit.min + amplitude * 0.3, // 30% uppest beats
             threshold = maxThreshold,
-            acuracy = event.renderedBuffer.sampleRate * (intervalMin / 1000);
+            acuracy = event.renderedBuffer.sampleRate * (intervalMin / 1000),
             peakFilter = [];
 
         // grab peaks
