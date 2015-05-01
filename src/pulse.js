@@ -19,7 +19,7 @@
 
         this.audioContext = this.getAudioContext();
         this.buffer = null;
-        this.setOptions(options || {});
+        this.options = options || {};
 
         this.WEB_AUDIO_API_NOT_SUPPORTED = 1001;
         this.REQUEST_PROGRESS = 101;
@@ -45,6 +45,22 @@
                 });
 
                 status = s;
+            }
+        });
+
+        Object.defineProperty(this, 'options', {
+            get: function() {
+                return options;
+            },
+            set: function(o) {
+                var defaultOptions = this.getDefaultOptions();
+                for(var i in defaultOptions) {
+                    if(o[i] == undefined) {
+                        o[i] = defaultOptions[i];
+                    }
+                }
+
+                options = o;
             }
         });
 
@@ -97,17 +113,6 @@
             this.status = this.WEB_AUDIO_API_NOT_SUPPORTED;
             return null;
         }
-    };
-
-    Pulse.prototype.setOptions = function(options) {
-        var defaultOptions = this.getDefaultOptions();
-        for(var i in defaultOptions) {
-            if(options[i] == undefined) {
-                options[i] = defaultOptions[i];
-            }
-        }
-
-        this.options = options;
     };
 
     Pulse.prototype.getDefaultOptions = function() {
@@ -275,7 +280,9 @@
         });
 
         if(self.options.convertToMilliseconds) {
-            peakFilter = self.convertHertzToMilliseconds(peakFilter, renderedBuffer.sampleRate);
+            for (var i in peakFilter) {
+                peakFilter[i] = Math.floor((peakFilter[i] / renderedBuffer.sampleRate) * 1000);
+            }
         }
 
         if(self.options.removeDuplicates) {
@@ -288,12 +295,21 @@
         return peakFilter;
     };
 
-    Pulse.prototype.convertHertzToMilliseconds = function(array, rate) {
-        for (var i in array) {
-            array[i] = Math.floor((array[i] / rate) * 1000);
-        }
+    Pulse.prototype.getInterval = function() {
+        // count interval durations between each peak
+        var intervals = {};
+        for (var i = 1; i < peakFilter.length; i++) {
+            for (var j = 0; j < i; j++) {
 
-        return array;
+                // assuming intervals must be less than 260 bpm (more than ~230 ms)
+                if (peakFilter[i] - peakFilter[j] >= 230) {
+                    if (intervals[peakFilter[i] - peakFilter[j]] === undefined) {
+                        intervals[peakFilter[i] - peakFilter[j]] = 0;
+                    }
+                    intervals[peakFilter[i] - peakFilter[j]]++;
+                }
+            }
+        }
     };
 
     /*Pulse.prototype.get = function() {
