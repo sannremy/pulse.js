@@ -13,12 +13,13 @@
      * Pulse constructor
      * @constructor
      */
-    Pulse = function() {
+    Pulse = function(options) {
 
         self = this;
 
         this.audioContext = this.getAudioContext();
         this.buffer = null;
+        this.setOptions(options || {});
 
         this.WEB_AUDIO_API_NOT_SUPPORTED = 1001;
         this.REQUEST_PROGRESS = 101;
@@ -98,6 +99,26 @@
         }
     };
 
+    Pulse.prototype.setOptions = function(options) {
+        var defaultOptions = this.getDefaultOptions();
+        for(var i in defaultOptions) {
+            if(options[i] == undefined) {
+                options[i] = defaultOptions[i];
+            }
+        }
+
+        this.options = options;
+    };
+
+    Pulse.prototype.getDefaultOptions = function() {
+        return {
+            onsuccess: function() {},
+            onerror: function() {},
+            convertToMilliseconds: true,
+            removeDuplicates: true,
+        };
+    };
+
     /**
      * LoadBufferFromURI description
      * @param  {string} uri - The URI of the song
@@ -110,9 +131,6 @@
             return false;
         }
 
-        options.onsuccess = options.onsuccess || function() {};
-        options.onerror = options.onerror || function() {};
-
         var request = new XMLHttpRequest();
 
         request.open("GET", uri, true);
@@ -123,11 +141,11 @@
         }, false);
 
         request.addEventListener("load", function(event) {
-            self._requestLoad(event, this, options);
+            self._requestLoad(event, this);
         }, false);
 
         request.addEventListener("error", function() {
-            self._requestError(event, this, options);
+            self._requestError(event, this);
         }, false);
 
         request.addEventListener("abort", function() {
@@ -147,19 +165,19 @@
         }
     };
 
-    Pulse.prototype._requestLoad = function(event, request, options) {
+    Pulse.prototype._requestLoad = function(event, request) {
         if(request.readyState === request.DONE) {
             this.buffer = request.response;
             this.status = this.REQUEST_LOAD;
-            options.onsuccess(this);
+            this.options.onsuccess(this);
         } else {
-            this._requestError(event, request, options);
+            this._requestError(event, request, this.options);
         }
     };
 
-    Pulse.prototype._requestError = function(event, request, options) {
+    Pulse.prototype._requestError = function(event, request) {
         this.status = this.REQUEST_ERROR;
-        options.onerror(request);
+        this.options.onerror(request);
     };
 
     Pulse.prototype._requestAbort = function() {
@@ -222,16 +240,17 @@
 
     Pulse.prototype.getPeaks = function(event) {
 
-        var channelData = event.renderedBuffer.getChannelData(0),
+        var renderedBuffer = event.renderedBuffer,
+            channelData = renderedBuffer.getChannelData(0),
             limit = this.getChannelDataMinMax(channelData),
             intervalMin = 230, // ms, max tempo = 260 bpm
             amplitude = Math.abs(limit.min) + Math.abs(limit.max),
             maxThreshold = limit.min + amplitude * 0.9, // 90% uppest beats
             minThreshold = limit.min + amplitude * 0.3, // 30% uppest beats
             threshold = maxThreshold,
-            acuracy = event.renderedBuffer.sampleRate * (intervalMin / 1000),
+            acuracy = renderedBuffer.sampleRate * (intervalMin / 1000),
             peakFilter = [],
-            duration = parseInt(event.renderedBuffer.duration, 10),
+            duration = parseInt(renderedBuffer.duration, 10),
             length = channelData.length,
             j;
 
@@ -255,7 +274,26 @@
             return a - b;
         });
 
+        if(self.options.convertToMilliseconds) {
+            peakFilter = self.convertHertzToMilliseconds(peakFilter, renderedBuffer.sampleRate);
+        }
+
+        if(self.options.removeDuplicates) {
+            // remove all duplicates and 0 values
+            peakFilter = peakFilter.filter(function(item, pos) {
+                return (!pos || item  > peakFilter[pos - 1]) && item > 0;
+            });
+        }
+
         return peakFilter;
+    };
+
+    Pulse.prototype.convertHertzToMilliseconds = function(array, rate) {
+        for (var i in array) {
+            array[i] = Math.floor((array[i] / rate) * 1000);
+        }
+
+        return array;
     };
 
     /*Pulse.prototype.get = function() {
