@@ -19,6 +19,12 @@
 
         this.audioContext = this.getAudioContext();
         this.buffer = null;
+        this.renderedBuffer = null;
+        this.significantPeaks = null;
+        this.beat = {
+            ms: null,
+            bpm: null
+        };
         this.options = options || {};
 
         this.WEB_AUDIO_API_NOT_SUPPORTED = 1001;
@@ -219,8 +225,10 @@
         var offlineContext = self.getOfflineContext(buffer);
 
         offlineContext.oncomplete = function(event) {
-            self.peaks = self.getPeaks(event);
-            console.log(self.peaks);
+            self.renderedBuffer = event.renderedBuffer;
+            self.significantPeaks = self.getSignificantPeaks(event);
+            self.beat = self.getBeat(self.significantPeaks);
+            console.log(self.beat);
         };
 
         offlineContext.startRendering();
@@ -243,31 +251,30 @@
         };
     };
 
-    Pulse.prototype.getPeaks = function(event) {
+    Pulse.prototype.getSignificantPeaks = function(event) {
 
-        var renderedBuffer = event.renderedBuffer,
-            channelData = renderedBuffer.getChannelData(0),
+        var channelData = this.renderedBuffer.getChannelData(0),
             limit = this.getChannelDataMinMax(channelData),
             intervalMin = 230, // ms, max tempo = 260 bpm
             amplitude = Math.abs(limit.min) + Math.abs(limit.max),
             maxThreshold = limit.min + amplitude * 0.9, // 90% uppest beats
             minThreshold = limit.min + amplitude * 0.3, // 30% uppest beats
             threshold = maxThreshold,
-            acuracy = renderedBuffer.sampleRate * (intervalMin / 1000),
-            peakFilter = [],
-            duration = parseInt(renderedBuffer.duration, 10),
+            acuracy = this.renderedBuffer.sampleRate * (intervalMin / 1000),
+            significantPeaks = [],
+            duration = parseInt(this.renderedBuffer.duration, 10),
             length = channelData.length,
             j;
 
         // grab peaks
         while (
             threshold >= minThreshold &&
-            peakFilter.length <= duration
+            significantPeaks.length <= duration
         ) {
             j = 0;
             for(; j < length; j++) {
                 if (channelData[j] > threshold) {
-                    peakFilter.push(j);
+                    significantPeaks.push(j);
 
                     j += acuracy;
                 }
@@ -275,40 +282,102 @@
             threshold -= 0.05; // -5% every interation
         }
 
-        peakFilter.sort(function(a, b) {
+        significantPeaks.sort(function(a, b) {
             return a - b;
         });
 
         if(self.options.convertToMilliseconds) {
-            for (var i in peakFilter) {
-                peakFilter[i] = Math.floor((peakFilter[i] / renderedBuffer.sampleRate) * 1000);
+            for (var i in significantPeaks) {
+                significantPeaks[i] = Math.floor((significantPeaks[i] / this.renderedBuffer.sampleRate) * 1000);
             }
         }
 
         if(self.options.removeDuplicates) {
             // remove all duplicates and 0 values
-            peakFilter = peakFilter.filter(function(item, pos) {
-                return (!pos || item  > peakFilter[pos - 1]) && item > 0;
+            significantPeaks = significantPeaks.filter(function(item, pos) {
+                return (!pos || item  > significantPeaks[pos - 1]) && item > 0;
             });
         }
 
-        return peakFilter;
+        return significantPeaks;
     };
 
-    Pulse.prototype.getInterval = function() {
+    Pulse.prototype.getBeat = function(significantPeaks) {
         // count interval durations between each peak
         var intervals = {};
-        for (var i = 1; i < peakFilter.length; i++) {
+        for (var i = 1; i < significantPeaks.length; i++) {
             for (var j = 0; j < i; j++) {
 
                 // assuming intervals must be less than 260 bpm (more than ~230 ms)
-                if (peakFilter[i] - peakFilter[j] >= 230) {
-                    if (intervals[peakFilter[i] - peakFilter[j]] === undefined) {
-                        intervals[peakFilter[i] - peakFilter[j]] = 0;
+                if (significantPeaks[i] - significantPeaks[j] >= 230) {
+                    if (intervals[significantPeaks[i] - significantPeaks[j]] === undefined) {
+                        intervals[significantPeaks[i] - significantPeaks[j]] = 0;
                     }
-                    intervals[peakFilter[i] - peakFilter[j]]++;
+                    intervals[significantPeaks[i] - significantPeaks[j]]++;
                 }
             }
+        }
+
+        // quadratic mean to compute the average power
+        var square = 0;
+        var count = 0;
+        for (var i in intervals) {
+            square += Math.pow(intervals[i], 2);
+            count++;
+        }
+
+        var avgCountInterval = Math.sqrt(square / count);
+
+        // get max beats between an interval (1000 ms)
+        var max = 0
+        var ms = 0;
+        var msBetween = [];
+        var k;
+        for (var i in intervals) {
+            if (intervals[i] > avgCountInterval) {
+                if (intervals[i] > max) {
+                    max = intervals[i];
+                    ms = parseInt(i, 10);
+                }
+
+                k = Math.floor(i / 500); // segmentation by 500, this needs to be computed
+                if (msBetween[k] === undefined) {
+                    msBetween.push({ max: 0, ms: parseInt(i, 10) });
+                }
+
+                if (msBetween[k] !== undefined && intervals[i] > msBetween[k].max) {
+                    msBetween[k] = { max: intervals[i], ms: parseInt(i, 10) };
+                }
+            }
+        }
+
+        // compare ms with all other time beats
+        var referenceMs = msBetween.slice(0, 3);
+        var sumMargins = [];
+        
+        for (var i = 0; i < referenceMs.length; i++) {
+            sumMargins.push(0);
+            for (var j in msBetween) {
+                sumMargins[i] += msBetween[j].ms % referenceMs[i].ms;
+            }
+        }
+
+        var minMarginIndex = 0;
+        var minMargin = sumMargins[minMarginIndex];
+        for (var i = 1; i < sumMargins.length; i++) {
+            if (minMargin > sumMargins[i]) {
+                minMargin = sumMargins[i];
+                minMarginIndex = i;
+            }
+        }
+
+        // find the start beat of tempo
+        var tempo = Math.round(60000 / referenceMs[minMarginIndex].ms);
+        var tempoMs = referenceMs[minMarginIndex].ms;
+
+        return {
+            ms: tempoMs,
+            bpm: tempo
         }
     };
 
