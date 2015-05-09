@@ -33,7 +33,8 @@
         this.REQUEST_ERROR = 1102;
         this.REQUEST_ABORT = 104;
 
-        var notifier = Object.getNotifier(this);
+        var notifier = Object.getNotifier(this),
+            changeIndex;
 
         Object.defineProperty(this, 'status', {
             get: function() {
@@ -59,9 +60,10 @@
                 return options;
             },
             set: function(o) {
-                var defaultOptions = this.getDefaultOptions();
-                for(var i in defaultOptions) {
-                    if(o[i] == undefined) {
+                var defaultOptions = this.getDefaultOptions(),
+                    i;
+                for(i in defaultOptions) {
+                    if(o[i] === undefined) {
                         o[i] = defaultOptions[i];
                     }
                 }
@@ -71,11 +73,11 @@
         });
 
         Object.observe(this, function(changes) {
-            for(var i = 0; i < changes.length; i++) {
+            for(changeIndex = 0; changeIndex < changes.length; changeIndex++) {
                 if(
-                    changes[i].type === 'update' &&
-                    changes[i].name === 'status' &&
-                    changes[i].lastValue != self.status
+                    changes[changeIndex].type === 'update' &&
+                    changes[changeIndex].name === 'status' &&
+                    changes[changeIndex].lastValue != self.status
                 ) {
                     switch(self.status) {
                         case self.WEB_AUDIO_API_NOT_SUPPORTED :
@@ -266,6 +268,7 @@
             significantPeaks = [],
             duration = parseInt(this.renderedBuffer.duration, 10),
             length = channelData.length,
+            i,
             j;
 
         // grab peaks
@@ -289,7 +292,7 @@
         });
 
         if(self.options.convertToMilliseconds) {
-            for (var i in significantPeaks) {
+            for (i in significantPeaks) {
                 significantPeaks[i] = Math.floor((significantPeaks[i] / this.renderedBuffer.sampleRate) * 1000);
             }
         }
@@ -306,9 +309,25 @@
 
     Pulse.prototype.getBeat = function(significantPeaks) {
         // count interval durations between each peak
-        var intervals = {};
-        for (var i = 1; i < significantPeaks.length; i++) {
-            for (var j = 0; j < i; j++) {
+        var intervals = {},
+            square = 0,
+            count = 0,
+            max = 0,
+            ms = 0,
+            msBetween = [],
+            k,
+            i,
+            j,
+            avgCountInterval,
+            referenceMs,
+            sumMargins = [],
+            minMarginIndex = 0,
+            minMargin,
+            tempo,
+            tempoMs;
+
+        for (i = 1; i < significantPeaks.length; i++) {
+            for (j = 0; j < i; j++) {
 
                 // assuming intervals must be less than 260 bpm (more than ~230 ms)
                 if (significantPeaks[i] - significantPeaks[j] >= 230) {
@@ -321,21 +340,15 @@
         }
 
         // quadratic mean to compute the average power
-        var square = 0;
-        var count = 0;
-        for (var i in intervals) {
+        for (i in intervals) {
             square += Math.pow(intervals[i], 2);
             count++;
         }
 
-        var avgCountInterval = Math.sqrt(square / count);
+        avgCountInterval = Math.sqrt(square / count);
 
         // get max beats between an interval (1000 ms)
-        var max = 0
-        var ms = 0;
-        var msBetween = [];
-        var k;
-        for (var i in intervals) {
+        for (i in intervals) {
             if (intervals[i] > avgCountInterval) {
                 if (intervals[i] > max) {
                     max = intervals[i];
@@ -354,19 +367,17 @@
         }
 
         // compare ms with all other time beats
-        var referenceMs = msBetween.slice(0, 3);
-        var sumMargins = [];
-        
-        for (var i = 0; i < referenceMs.length; i++) {
+        referenceMs = msBetween.slice(0, 3);
+        for (i = 0; i < referenceMs.length; i++) {
             sumMargins.push(0);
-            for (var j in msBetween) {
+            for (j in msBetween) {
                 sumMargins[i] += msBetween[j].ms % referenceMs[i].ms;
             }
         }
 
-        var minMarginIndex = 0;
-        var minMargin = sumMargins[minMarginIndex];
-        for (var i = 1; i < sumMargins.length; i++) {
+        minMarginIndex = 0;
+        minMargin = sumMargins[minMarginIndex];
+        for (i = 1; i < sumMargins.length; i++) {
             if (minMargin > sumMargins[i]) {
                 minMargin = sumMargins[i];
                 minMarginIndex = i;
@@ -374,19 +385,28 @@
         }
 
         // find the start beat of tempo
-        var tempo = Math.round(60000 / referenceMs[minMarginIndex].ms);
-        var tempoMs = referenceMs[minMarginIndex].ms;
+        tempo = Math.round(60000 / referenceMs[minMarginIndex].ms);
+        tempoMs = referenceMs[minMarginIndex].ms;
 
         return {
             ms: tempoMs,
             bpm: tempo
-        }
+        };
     };
 
     Pulse.prototype.getExtrapolatedPeaks = function(renderedBuffer, significantPeaks, beat) {
-        var playbackTempo = [];
-        for (var i = 0; i < significantPeaks.length; i++) {
-            for (var j = 0; j < i; j++) {
+        var playbackTempo = [],
+            i,
+            j,
+            chainedKeys = [],
+            chainedKeysMax = [],
+            errorMs = 2,
+            extrapolatedPeaks = [],
+            minChained,
+            maxChained;
+
+        for (i = 0; i < significantPeaks.length; i++) {
+            for (j = 0; j < i; j++) {
                 if(significantPeaks[i] - significantPeaks[j] == beat.ms) {
                    playbackTempo.push(significantPeaks[i]);
                    playbackTempo.push(significantPeaks[j]);
@@ -403,10 +423,7 @@
         });
 
         // detect chained
-        var chainedKeys = [];
-        var chainedKeysMax = [];
-        var errorMs = 2;
-        for (var i = 0; i < playbackTempo.length - 1; i++) {
+        for (i = 0; i < playbackTempo.length - 1; i++) {
             if (playbackTempo[i] + beat.ms <= playbackTempo[i + 1] + errorMs && playbackTempo[i] + beat.ms >= playbackTempo[i + 1] - errorMs) {
                 chainedKeys.push(i);
             } else {
@@ -418,22 +435,20 @@
             }
         }
 
-        var extrapolatedPeaks = [];
-
         if (chainedKeysMax.length) {
-            var minChained = playbackTempo[chainedKeysMax[0]];
+            minChained = playbackTempo[chainedKeysMax[0]];
             while (minChained > beat.ms) {
                 minChained -= beat.ms;
             }
 
-            var maxChained = playbackTempo[chainedKeysMax.length - 1];
+            maxChained = playbackTempo[chainedKeysMax.length - 1];
             while (maxChained < renderedBuffer.duration * 1000) {
                 maxChained += beat.ms;
             }
 
-            for (var i = minChained; i <= maxChained; i += beat.ms) {
+            for (i = minChained; i <= maxChained; i += beat.ms) {
                 extrapolatedPeaks.push(i);
-            };
+            }
         }
 
         return extrapolatedPeaks;
