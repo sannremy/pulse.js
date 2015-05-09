@@ -123,8 +123,9 @@
 
     Pulse.prototype.getDefaultOptions = function() {
         return {
-            onsuccess: function() {},
-            onerror: function() {},
+            onComplete: function() {},
+            onRequestSuccess: function() {},
+            onRequestError: function() {},
             convertToMilliseconds: true,
             removeDuplicates: true,
         };
@@ -180,7 +181,8 @@
         if(request.readyState === request.DONE) {
             this.buffer = request.response;
             this.status = this.REQUEST_LOAD;
-            this.options.onsuccess(this);
+            this.options.onRequestSuccess(this, request);
+            this.process();
         } else {
             this._requestError(event, request, this.options);
         }
@@ -188,7 +190,7 @@
 
     Pulse.prototype._requestError = function(event, request) {
         this.status = this.REQUEST_ERROR;
-        this.options.onerror(request);
+        this.options.onRequestError(this, request);
     };
 
     Pulse.prototype._requestAbort = function() {
@@ -198,7 +200,7 @@
     Pulse.prototype.process = function() {
         this.audioContext.decodeAudioData(
             this.buffer,
-            this.processBpm,
+            this.processCallback,
             function(error) {
                 self.status = self.DECODING_ERROR;
             }
@@ -220,7 +222,7 @@
         return offlineContext;
     };
 
-    Pulse.prototype.processBpm = function(buffer) {
+    Pulse.prototype.processCallback = function(buffer) {
 
         var offlineContext = self.getOfflineContext(buffer);
 
@@ -228,8 +230,7 @@
             self.renderedBuffer = event.renderedBuffer;
             self.significantPeaks = self.getSignificantPeaks(event);
             self.beat = self.getBeat(self.significantPeaks);
-            self.extrapolatedPeaks = self.getExtrapolatedPeaks(self.renderedBuffer, self.significantPeaks, self.beat);
-            console.log(self.extrapolatedPeaks);
+            self.options.onComplete(event, self);
         };
 
         offlineContext.startRendering();
