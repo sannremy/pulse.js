@@ -8,10 +8,16 @@ var pulse = new Pulse({
 
 		console.log(extrapolatedPeaks);
 	},
-    onRequestSuccess: function(pulse, request) {
+	onRequestProgress:function(pulse, request, requestEvent) {
+
+	},
+    onRequestSuccess: function(pulse, request, requestEvent) {
     	//console.log(pulse);
     },
-    onRequestError: function(pulse, request) {
+    onRequestAbort: function(pulse, request, requestEvent) {
+        
+    },
+    onRequestError: function(pulse, request, requestEvent) {
         //console.log(request.status);
     },
     convertToMilliseconds: true,

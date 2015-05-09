@@ -124,7 +124,9 @@
     Pulse.prototype.getDefaultOptions = function() {
         return {
             onComplete: function() {},
+            onRequestProgress: function() {},
             onRequestSuccess: function() {},
+            onRequestAbort: function() {},
             onRequestError: function() {},
             convertToMilliseconds: true,
             removeDuplicates: true,
@@ -149,7 +151,7 @@
         request.responseType = "arraybuffer";
 
         request.addEventListener("progress", function(event) {
-            self._requestProgress(event);
+            self._requestProgress(event, this);
         }, false);
 
         request.addEventListener("load", function(event) {
@@ -161,7 +163,7 @@
         }, false);
 
         request.addEventListener("abort", function() {
-            self._requestAbort();
+            self._requestAbort(event, this);
         }, false);
 
         request.send(null);
@@ -169,19 +171,16 @@
         return true;
     };
 
-    Pulse.prototype._requestProgress = function(event) {
+    Pulse.prototype._requestProgress = function(event, request) {
         this.status = this.REQUEST_PROGRESS;
-
-        if(event.lengthComputable) {
-            //console.log(event.loaded + ' / ' + event.total);
-        }
+        this.options.onRequestProgress(this, request, event);
     };
 
     Pulse.prototype._requestLoad = function(event, request) {
         if(request.readyState === request.DONE) {
             this.buffer = request.response;
             this.status = this.REQUEST_LOAD;
-            this.options.onRequestSuccess(this, request);
+            this.options.onRequestSuccess(this, request, event);
             this.process();
         } else {
             this._requestError(event, request, this.options);
@@ -190,11 +189,12 @@
 
     Pulse.prototype._requestError = function(event, request) {
         this.status = this.REQUEST_ERROR;
-        this.options.onRequestError(this, request);
+        this.options.onRequestError(this, request, event);
     };
 
-    Pulse.prototype._requestAbort = function() {
+    Pulse.prototype._requestAbort = function(event, request) {
         this.status = this.REQUEST_ABORT;
+        this.options.onRequestAbort(this, request, event);
     };
 
     Pulse.prototype.process = function() {
