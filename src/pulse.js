@@ -7,48 +7,127 @@
     /**
      * @global
      * @class Pulse
-     * @description Beats per minute (BPM) automatic detection with Web Audio API.
-     * @param {object} options Options available for Pulse
+     * @classdesc Beats per minute (BPM) automatic detection with Web Audio API.
+     * @param {object} options Options available for Pulse.
      * @param {function} options.onComplete Fired when Pulse has finished to compute main data: beat, significant peaks.
      * @param {function} options.onRequestProgress Fired when the XHR object is downloading data.
      * @param {function} options.onRequestSuccess Fired when the XHR object has successfully finished.
      * @param {function} options.onRequestAbort Fired when the XHR object has aborted.
      * @param {function} options.onRequestError Fired when the XHR object has an error occured.
-     * @param {boolean} options.convertToMilliseconds [options.convertToMilliseconds=true]
-     * @param {boolean} options.removeDuplicates [options.removeDuplicates=true]
+     * @param {boolean} [options.convertToMilliseconds=true] If false, significant peaks are in Hertz unit.
+     * @param {boolean} [options.removeDuplicates=true] If false, all significant peaks are computed.
      * @returns {void}
      */
-     Pulse = function(options) {
+    Pulse = function(options) {
 
         self = this;
 
-        this.audioContext = this.getAudioContext();
+        /**
+         * @name Pulse#audioContext
+         * @description The Audio Context object.
+         * @type {object}
+         */
+        this.audioContext = this._getAudioContext();
+
+        /**
+         * @name Pulse#buffer
+         * @description The buffer that contains audio data.
+         * @type {object}
+         * @default null
+         */
         this.buffer = null;
+
+        /**
+         * @name Pulse#renderedBuffer
+         * @description The rendered buffer in the offline audio context.
+         * @type {object}
+         * @default null
+         */
         this.renderedBuffer = null;
+
+        /**
+         * @name Pulse#significantPeaks
+         * @description The array of significant peaks found
+         * @type {object}
+         * @default null
+         */
         this.significantPeaks = null;
+
+        /**
+         * @name Pulse#beat
+         * @description The computed beat including milliseconds and beat per minute.
+         * @type {object}
+         * @default {ms: null, bpm: null};
+         */
         this.beat = {
             ms: null,
             bpm: null
         };
-        this.options = options || {};
 
         /**
-         * @param {number} WEB_AUDIO_API_NOT_SUPPORTED [WEB_AUDIO_API_NOT_SUPPORTED=1001]
-         * @param {number} REQUEST_PROGRESS [REQUEST_PROGRESS=101]
-         * @param {number} REQUEST_LOAD [REQUEST_LOAD=102]
-         * @param {number} REQUEST_ERROR [REQUEST_ERROR=1102]
-         * @param {number} REQUEST_ABORT [REQUEST_ABORT=104]
+         * @name Pulse#REQUEST_PROGRESS
+         * @description Status when a request is in progress.
+         * @type {number}
+         * @readonly
          */
-         this.WEB_AUDIO_API_NOT_SUPPORTED = 1001;
-         this.REQUEST_PROGRESS = 101;
-         this.REQUEST_LOAD = 102;
-         this.REQUEST_ERROR = 1102;
-         this.REQUEST_ABORT = 104;
+        Object.defineProperty(this, 'REQUEST_PROGRESS', {
+            value: 101,
+            writable: false
+        });
 
-         var notifier = Object.getNotifier(this),
-         changeIndex;
+        /**
+         * @name Pulse#REQUEST_LOAD
+         * @description Status when a request is downloading.
+         * @type {number}
+         * @readonly
+         */
+        Object.defineProperty(this, 'REQUEST_LOAD', {
+            value: 102,
+            writable: false
+        });
 
-         Object.defineProperty(this, 'status', {
+        /**
+         * @name Pulse#REQUEST_ERROR
+         * @description Status when a request has an error.
+         * @type {number}
+         * @readonly
+         */
+        Object.defineProperty(this, 'REQUEST_ERROR', {
+            value: 1102,
+            writable: false
+        });
+
+        /**
+         * @name Pulse#REQUEST_ABORT
+         * @description Status when a request is aborted.
+         * @type {number}
+         * @readonly
+         */
+        Object.defineProperty(this, 'REQUEST_ABORT', {
+            value: 104,
+            writable: false
+        });
+
+        /**
+         * @name Pulse#WEB_AUDIO_API_NOT_SUPPORTED
+         * @description Status when the browser does not support Web Audio API.
+         * @type {number}
+         * @readonly
+         */
+        Object.defineProperty(this, 'WEB_AUDIO_API_NOT_SUPPORTED', {
+            value: 1001,
+            writable: false
+        });
+
+        var notifier = Object.getNotifier(this),
+        changeIndex;
+
+        /**
+         * @name Pulse#status
+         * @description The status of a Pulse operation.
+         * @type {number}
+         */
+        Object.defineProperty(this, 'status', {
             get: function() {
                 return parseInt(status, 10);
             },
@@ -67,9 +146,15 @@
             }
         });
 
-         Object.defineProperty(this, 'options', {
+        /**
+         * @name Pulse#options
+         * @description Options available for Pulse.
+         * @type {object}
+         * @default {}
+         */
+        Object.defineProperty(this, 'options', {
             get: function() {
-                return options;
+                return options || this.getDefaultOptions();
             },
             set: function(o) {
                 var defaultOptions = this.getDefaultOptions(),
@@ -84,7 +169,7 @@
             }
         });
 
-         Object.observe(this, function(changes) {
+        Object.observe(this, function(changes) {
             for(changeIndex = 0; changeIndex < changes.length; changeIndex++) {
                 if(
                     changes[changeIndex].type === 'update' &&
@@ -119,15 +204,16 @@
                 }
             }
         });
-};
+    };
 
     /**
      * @memberof Pulse#
-     * @method Pulse#getAudioContext
-     * @description getAudioContext description
+     * @method Pulse#_getAudioContext
+     * @access private
+     * @description Get the audio context of the browser.
      * @returns {AudioContext|object} The audio context object or null if the browser is not supported Web Audio API.
      */
-     Pulse.prototype.getAudioContext = function() {
+     Pulse.prototype._getAudioContext = function() {
         try {
             global.AudioContext = global.AudioContext || global.webkitAudioContext;
             return new global.AudioContext();
@@ -140,7 +226,7 @@
     /**
      * @memberof Pulse#
      * @method Pulse#getDefaultOptions
-     * @description getDefaultOptions description
+     * @description Get the default options.
      * @returns {object} Options with default values
      */
      Pulse.prototype.getDefaultOptions = function() {
@@ -158,9 +244,9 @@
     /**
      * @memberof Pulse#
      * @method Pulse#loadBufferFromURI
-     * @description loadBufferFromURI description
-     * @param {string} uri
-     * @returns {boolean} Options with default values
+     * @description Load a song from an URI.
+     * @param {string} uri The URI of the song.
+     * @returns {boolean} Always true but the request event has more information.
      */
      Pulse.prototype.loadBufferFromURI = function(uri) {
 
@@ -212,7 +298,7 @@
      * @memberof Pulse#
      * @method Pulse#_requestLoad
      * @access private
-     * @description _requestLoad description
+     * @description The method is called in the request load event.
      * @param {RequestEvent} event The request event object
      * @param {XmlHttpRequest} request The XHR object
      * @returns {void}
@@ -222,7 +308,7 @@
             this.buffer = request.response;
             this.status = this.REQUEST_LOAD;
             this.options.onRequestSuccess(this, request, event);
-            this.process();
+            this._process();
         } else {
             this._requestError(event, request, this.options);
         }
@@ -232,7 +318,7 @@
      * @memberof Pulse#
      * @method Pulse#_requestError
      * @access private
-     * @description _requestError description
+     * @description The method is called in the request error event.
      * @param {RequestEvent} event The request event object
      * @param {XmlHttpRequest} request The XHR object
      * @returns {void}
@@ -246,7 +332,7 @@
      * @memberof Pulse#
      * @method Pulse#_requestAbort
      * @access private
-     * @description _requestAbort description
+     * @description The method is called in the request abort event.
      * @param {RequestEvent} event The request event object
      * @param {XmlHttpRequest} request The XHR object
      * @returns {void}
@@ -258,14 +344,15 @@
 
     /**
      * @memberof Pulse#
-     * @method Pulse#process
-     * @description Decode audio data
+     * @method Pulse#_process
+     * @access private
+     * @description Process to decode audio data, if fails it sends a DECODING_ERROR status.
      * @return {void}
      */
-    Pulse.prototype.process = function() {
+    Pulse.prototype._process = function() {
         this.audioContext.decodeAudioData(
             this.buffer,
-            this.processCallback,
+            this._processCallback,
             function(error) {
                 self.status = self.DECODING_ERROR;
             }
@@ -274,11 +361,12 @@
 
     /**
      * @memberof Pulse#
-     * @method Pulse#getOfflineContext
-     * @description description
+     * @method Pulse#_getOfflineContext
+     * @access private
+     * @description Get the offline audio context and set nodes and filters.
      * @return {OfflineAudioContext}
      */
-    Pulse.prototype.getOfflineContext = function(buffer) {
+    Pulse.prototype._getOfflineContext = function(buffer) {
         var offlineContext = new global.OfflineAudioContext(1, buffer.length, buffer.sampleRate),
         source = offlineContext.createBufferSource(),
         filter = offlineContext.createBiquadFilter();
@@ -295,18 +383,21 @@
 
     /**
      * @memberof Pulse#
-     * @method Pulse#processCallback
-     * @description description
+     * @method Pulse#_processCallback
+     * @access private
+     * @description Callback after audio data is decoded.
      * @return {void}
      */
-    Pulse.prototype.processCallback = function(buffer) {
+    Pulse.prototype._processCallback = function(buffer) {
 
-        var offlineContext = self.getOfflineContext(buffer);
+        var offlineContext = self._getOfflineContext(buffer);
 
         offlineContext.oncomplete = function(event) {
             self.renderedBuffer = event.renderedBuffer;
             self.significantPeaks = self.getSignificantPeaks(event);
             self.beat = self.getBeat(self.significantPeaks);
+
+            // give a user callback
             self.options.onComplete(event, self);
         };
 
@@ -315,11 +406,11 @@
 
     /**
      * @memberof Pulse#
-     * @method Pulse#getChannelDataMinMax
-     * @description description
+     * @method Pulse#_getChannelDataMinMax
+     * @description Get the min/max of a channel data.
      * @return {object}
      */
-    Pulse.prototype.getChannelDataMinMax = function(channelData) {
+    Pulse.prototype._getChannelDataMinMax = function(channelData) {
         var length = channelData.length,
         min = channelData[0],
         max = channelData[0],
@@ -339,13 +430,13 @@
     /**
      * @memberof Pulse#
      * @method Pulse#getSignificantPeaks
-     * @description description
+     * @description Get the significant peaks.
      * @return {object}
      */
     Pulse.prototype.getSignificantPeaks = function(event) {
 
         var channelData = this.renderedBuffer.getChannelData(0),
-        limit = this.getChannelDataMinMax(channelData),
+        limit = this._getChannelDataMinMax(channelData),
             intervalMin = 230, // ms, max tempo = 260 bpm
             amplitude = Math.abs(limit.min) + Math.abs(limit.max),
             maxThreshold = limit.min + amplitude * 0.9, // 90% uppest beats
@@ -397,7 +488,7 @@
     /**
      * @memberof Pulse#
      * @method Pulse#getBeat
-     * @description description
+     * @description Get the beat in milliseconds and beat per minute.
      * @return {object}
      */
     Pulse.prototype.getBeat = function(significantPeaks) {
@@ -490,7 +581,7 @@
     /**
      * @memberof Pulse#
      * @method Pulse#getExtrapolatedPeaks
-     * @description description
+     * @description Get the extrapolated peaks regarding the computed beat.
      * @return {object}
      */
     Pulse.prototype.getExtrapolatedPeaks = function(renderedBuffer, significantPeaks, beat) {

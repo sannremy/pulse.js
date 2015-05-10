@@ -8,6 +8,9 @@ Usage
 
 TODO
 
+Examples
+--------
+
 Documentation
 -------------
 

@@ -30,6 +30,8 @@
     Pulse
     </h2>
     
+        <div class="class-description">Beats per minute (BPM) automatic detection with Web Audio API.</div>
+    
 </header>  
 
 <article>
@@ -45,10 +47,6 @@
 </dt>
 <dd>
     
-    
-    <div class="description">
-        Beats per minute (BPM) automatic detection with Web Audio API.
-    </div>
     
 
     
@@ -97,7 +95,7 @@
             
             
             
-            <td class="description last">Options available for Pulse
+            <td class="description last">Options available for Pulse.
                 <h6>Properties</h6>
                 
 
@@ -111,7 +109,11 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -136,7 +138,19 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">Fired when Pulse has finished to compute main data: beat, significant peaks.</td>
@@ -159,7 +173,19 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">Fired when the XHR object is downloading data.</td>
@@ -182,7 +208,19 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">Fired when the XHR object has successfully finished.</td>
@@ -205,7 +243,19 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">Fired when the XHR object has aborted.</td>
@@ -228,7 +278,19 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">Fired when the XHR object has an error occured.</td>
@@ -251,10 +313,26 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last">[options.convertToMilliseconds=true]</td>
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+            
+            <td class="description last">If false, significant peaks are in Hertz unit.</td>
         </tr>
 	
 	
@@ -274,10 +352,26 @@
             </td>
             
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last">[options.removeDuplicates=true]</td>
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+            
+            <td class="description last">If false, all significant peaks are computed.</td>
         </tr>
 	
 	
@@ -371,11 +465,1250 @@
     
     
     
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="audioContext"><span class="type-signature"></span>audioContext<span class="type-signature"> :object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The Audio Context object.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line25">line 25</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="beat"><span class="type-signature"></span>beat<span class="type-signature"> :object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The computed beat including milliseconds and beat per minute.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>{ms: null, bpm: null};</li>
+        </ul></dd>
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line56">line 56</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="buffer"><span class="type-signature"></span>buffer<span class="type-signature"> :object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The buffer that contains audio data.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>null</li>
+        </ul></dd>
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="options"><span class="type-signature"></span>options<span class="type-signature"> :object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Options available for Pulse.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>{}</li>
+        </ul></dd>
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line149">line 149</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="renderedBuffer"><span class="type-signature"></span>renderedBuffer<span class="type-signature"> :object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The rendered buffer in the offline audio context.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>null</li>
+        </ul></dd>
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line40">line 40</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="REQUEST_ABORT"><span class="type-signature">&lt;readonly> </span>REQUEST_ABORT<span class="type-signature"> :number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Status when a request is aborted.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line100">line 100</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="REQUEST_ERROR"><span class="type-signature">&lt;readonly> </span>REQUEST_ERROR<span class="type-signature"> :number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Status when a request has an error.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line89">line 89</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="REQUEST_LOAD"><span class="type-signature">&lt;readonly> </span>REQUEST_LOAD<span class="type-signature"> :number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Status when a request is downloading.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line78">line 78</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="REQUEST_PROGRESS"><span class="type-signature">&lt;readonly> </span>REQUEST_PROGRESS<span class="type-signature"> :number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Status when a request is in progress.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line67">line 67</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="significantPeaks"><span class="type-signature"></span>significantPeaks<span class="type-signature"> :object</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The array of significant peaks found
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>null</li>
+        </ul></dd>
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="status"><span class="type-signature"></span>status<span class="type-signature"> :number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The status of a Pulse operation.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line125">line 125</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="WEB_AUDIO_API_NOT_SUPPORTED"><span class="type-signature">&lt;readonly> </span>WEB_AUDIO_API_NOT_SUPPORTED<span class="type-signature"> :number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Status when the browser does not support Web Audio API.
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line111">line 111</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
     
     
         <h3 class="subsection-title">Methods</h3>
         
         <dl>
+            
+<dt>
+    <h4 class="name" id="_getAudioContext"><span class="type-signature">&lt;private> </span>_getAudioContext<span class="signature">()</span><span class="type-signature"> &rarr; {AudioContext|object}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get the audio context of the browser.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line209">line 209</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The audio context object or null if the browser is not supported Web Audio API.
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">AudioContext</span>
+|
+
+<span class="param-type">object</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_getChannelDataMinMax"><span class="type-signature"></span>_getChannelDataMinMax<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get the min/max of a channel data.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line407">line 407</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">object</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_getOfflineContext"><span class="type-signature">&lt;private> </span>_getOfflineContext<span class="signature">()</span><span class="type-signature"> &rarr; {OfflineAudioContext}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get the offline audio context and set nodes and filters.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line362">line 362</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">OfflineAudioContext</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_process"><span class="type-signature">&lt;private> </span>_process<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Process to decode audio data, if fails it sends a DECODING_ERROR status.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line345">line 345</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">void</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_processCallback"><span class="type-signature">&lt;private> </span>_processCallback<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Callback after audio data is decoded.
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line384">line 384</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">void</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
             
 <dt>
     <h4 class="name" id="_requestAbort"><span class="type-signature">&lt;private> </span>_requestAbort<span class="signature">(event, request)</span><span class="type-signature"> &rarr; {void}</span></h4>
@@ -386,7 +1719,7 @@
     
     
     <div class="description">
-        _requestAbort description
+        The method is called in the request abort event.
     </div>
     
 
@@ -490,7 +1823,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line245">line 245</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line331">line 331</a>
     </li></ul></dd>
     
     
@@ -544,7 +1877,7 @@
     
     
     <div class="description">
-        _requestError description
+        The method is called in the request error event.
     </div>
     
 
@@ -648,7 +1981,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line231">line 231</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line317">line 317</a>
     </li></ul></dd>
     
     
@@ -702,7 +2035,7 @@
     
     
     <div class="description">
-        _requestLoad description
+        The method is called in the request load event.
     </div>
     
 
@@ -806,7 +2139,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line211">line 211</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line297">line 297</a>
     </li></ul></dd>
     
     
@@ -964,7 +2297,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line197">line 197</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line283">line 283</a>
     </li></ul></dd>
     
     
@@ -1010,100 +2343,6 @@
         
             
 <dt>
-    <h4 class="name" id="getAudioContext"><span class="type-signature"></span>getAudioContext<span class="signature">()</span><span class="type-signature"> &rarr; {AudioContext|object}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        getAudioContext description
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line124">line 124</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The audio context object or null if the browser is not supported Web Audio API.
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">AudioContext</span>
-|
-
-<span class="param-type">object</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="getBeat"><span class="type-signature"></span>getBeat<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
     
     
@@ -1112,7 +2351,7 @@
     
     
     <div class="description">
-        description
+        Get the beat in milliseconds and beat per minute.
     </div>
     
 
@@ -1145,94 +2384,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line397">line 397</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">object</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="getChannelDataMinMax"><span class="type-signature"></span>getChannelDataMinMax<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        description
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line316">line 316</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line488">line 488</a>
     </li></ul></dd>
     
     
@@ -1286,7 +2438,7 @@
     
     
     <div class="description">
-        getDefaultOptions description
+        Get the default options.
     </div>
     
 
@@ -1319,7 +2471,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line140">line 140</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line226">line 226</a>
     </li></ul></dd>
     
     
@@ -1377,7 +2529,7 @@
     
     
     <div class="description">
-        description
+        Get the extrapolated peaks regarding the computed beat.
     </div>
     
 
@@ -1410,7 +2562,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line490">line 490</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line581">line 581</a>
     </li></ul></dd>
     
     
@@ -1456,93 +2608,6 @@
         
             
 <dt>
-    <h4 class="name" id="getOfflineContext"><span class="type-signature"></span>getOfflineContext<span class="signature">()</span><span class="type-signature"> &rarr; {OfflineAudioContext}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        description
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line275">line 275</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">OfflineAudioContext</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="getSignificantPeaks"><span class="type-signature"></span>getSignificantPeaks<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
     
     
@@ -1551,7 +2616,7 @@
     
     
     <div class="description">
-        description
+        Get the significant peaks.
     </div>
     
 
@@ -1584,7 +2649,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line339">line 339</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line430">line 430</a>
     </li></ul></dd>
     
     
@@ -1638,7 +2703,7 @@
     
     
     <div class="description">
-        loadBufferFromURI description
+        Load a song from an URI.
     </div>
     
 
@@ -1688,7 +2753,7 @@
             
             
             
-            <td class="description last"></td>
+            <td class="description last">The URI of the song.</td>
         </tr>
 	
 	
@@ -1719,7 +2784,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line158">line 158</a>
+        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line244">line 244</a>
     </li></ul></dd>
     
     
@@ -1744,7 +2809,7 @@
     
             
 <div class="param-desc">
-    Options with default values
+    Always true but the request event has more information.
 </div>
 
 
@@ -1756,180 +2821,6 @@
 	<dd>
 		
 <span class="param-type">boolean</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="process"><span class="type-signature"></span>process<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Decode audio data
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line259">line 259</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">void</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="processCallback"><span class="type-signature"></span>processCallback<span class="signature">()</span><span class="type-signature"> &rarr; {void}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        description
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="pulse.js.html">pulse.js</a>, <a href="pulse.js.html#line296">line 296</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">void</span>
 
 
 	</dd>
@@ -1962,7 +2853,7 @@
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun May 10 2015 16:22:04 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun May 10 2015 18:54:14 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

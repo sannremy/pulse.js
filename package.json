@@ -2,10 +2,6 @@
   "name": "pulse.js",
   "version": "1.0.0",
   "description": "Beats per minute (BPM) automatic detection with Web Audio API.",
-  "main": "bin/pulse.min.js",
-  "bin": {
-    "pulse.js": "pulse.min.js"
-  },
   "directories": {
     "doc": "doc",
     "test": "test"
@@ -18,9 +14,6 @@
     "grunt-jsdoc": "^0.5.8"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/srchea/pulse.js.git"
@@ -35,7 +28,7 @@
     "audio"
   ],
   "author": "Sann-Remy Chea",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/srchea/pulse.js/issues"
   },
