@@ -1,8 +1,3 @@
-/**
- * Pulse.js - Beats per minute (BPM) automatic detection with Web Audio API.
- * @param  {object} global - The window object
- * @return {void}
- */
 (function(global) {
 
     "use strict";
@@ -10,10 +5,20 @@
     var self,
 
     /**
-     * Pulse constructor
-     * @constructor
+     * @global
+     * @class Pulse
+     * @description Beats per minute (BPM) automatic detection with Web Audio API.
+     * @param {object} options Options available for Pulse
+     * @param {function} options.onComplete Fired when Pulse has finished to compute main data: beat, significant peaks.
+     * @param {function} options.onRequestProgress Fired when the XHR object is downloading data.
+     * @param {function} options.onRequestSuccess Fired when the XHR object has successfully finished.
+     * @param {function} options.onRequestAbort Fired when the XHR object has aborted.
+     * @param {function} options.onRequestError Fired when the XHR object has an error occured.
+     * @param {boolean} options.convertToMilliseconds [options.convertToMilliseconds=true]
+     * @param {boolean} options.removeDuplicates [options.removeDuplicates=true]
+     * @returns {void}
      */
-    Pulse = function(options) {
+     Pulse = function(options) {
 
         self = this;
 
@@ -27,16 +32,23 @@
         };
         this.options = options || {};
 
-        this.WEB_AUDIO_API_NOT_SUPPORTED = 1001;
-        this.REQUEST_PROGRESS = 101;
-        this.REQUEST_LOAD = 102;
-        this.REQUEST_ERROR = 1102;
-        this.REQUEST_ABORT = 104;
+        /**
+         * @param {number} WEB_AUDIO_API_NOT_SUPPORTED [WEB_AUDIO_API_NOT_SUPPORTED=1001]
+         * @param {number} REQUEST_PROGRESS [REQUEST_PROGRESS=101]
+         * @param {number} REQUEST_LOAD [REQUEST_LOAD=102]
+         * @param {number} REQUEST_ERROR [REQUEST_ERROR=1102]
+         * @param {number} REQUEST_ABORT [REQUEST_ABORT=104]
+         */
+         this.WEB_AUDIO_API_NOT_SUPPORTED = 1001;
+         this.REQUEST_PROGRESS = 101;
+         this.REQUEST_LOAD = 102;
+         this.REQUEST_ERROR = 1102;
+         this.REQUEST_ABORT = 104;
 
-        var notifier = Object.getNotifier(this),
-            changeIndex;
+         var notifier = Object.getNotifier(this),
+         changeIndex;
 
-        Object.defineProperty(this, 'status', {
+         Object.defineProperty(this, 'status', {
             get: function() {
                 return parseInt(status, 10);
             },
@@ -55,13 +67,13 @@
             }
         });
 
-        Object.defineProperty(this, 'options', {
+         Object.defineProperty(this, 'options', {
             get: function() {
                 return options;
             },
             set: function(o) {
                 var defaultOptions = this.getDefaultOptions(),
-                    i;
+                i;
                 for(i in defaultOptions) {
                     if(o[i] === undefined) {
                         o[i] = defaultOptions[i];
@@ -72,48 +84,50 @@
             }
         });
 
-        Object.observe(this, function(changes) {
+         Object.observe(this, function(changes) {
             for(changeIndex = 0; changeIndex < changes.length; changeIndex++) {
                 if(
                     changes[changeIndex].type === 'update' &&
                     changes[changeIndex].name === 'status' &&
                     changes[changeIndex].lastValue != self.status
-                ) {
+                    ) {
                     switch(self.status) {
                         case self.WEB_AUDIO_API_NOT_SUPPORTED :
-                            console.error("WEB_AUDIO_API_NOT_SUPPORTED");
+                        console.error("WEB_AUDIO_API_NOT_SUPPORTED");
                         break;
 
                         case self.REQUEST_PROGRESS :
-                            console.log("REQUEST_PROGRESS");
+                        console.log("REQUEST_PROGRESS");
                         break;
 
                         case self.REQUEST_LOAD :
-                            console.log("REQUEST_LOAD");
+                        console.log("REQUEST_LOAD");
                         break;
 
                         case self.REQUEST_ERROR :
-                            console.error("REQUEST_ERROR");
+                        console.error("REQUEST_ERROR");
                         break;
 
                         case self.REQUEST_ABORT :
-                            console.error("REQUEST_ABORT");
+                        console.error("REQUEST_ABORT");
                         break;
 
                         default :
-                            console.error("STATUS NOT IMPLEMENTED");
+                        console.error("STATUS NOT IMPLEMENTED");
                         break;
                     }
                 }
             }
         });
-    };
+};
 
     /**
-     * getAudioContext description
-     * @return {object} AudioContext
+     * @memberof Pulse#
+     * @method Pulse#getAudioContext
+     * @description getAudioContext description
+     * @returns {AudioContext|object} The audio context object or null if the browser is not supported Web Audio API.
      */
-    Pulse.prototype.getAudioContext = function() {
+     Pulse.prototype.getAudioContext = function() {
         try {
             global.AudioContext = global.AudioContext || global.webkitAudioContext;
             return new global.AudioContext();
@@ -123,7 +137,13 @@
         }
     };
 
-    Pulse.prototype.getDefaultOptions = function() {
+    /**
+     * @memberof Pulse#
+     * @method Pulse#getDefaultOptions
+     * @description getDefaultOptions description
+     * @returns {object} Options with default values
+     */
+     Pulse.prototype.getDefaultOptions = function() {
         return {
             onComplete: function() {},
             onRequestProgress: function() {},
@@ -136,12 +156,13 @@
     };
 
     /**
-     * LoadBufferFromURI description
-     * @param  {string} uri - The URI of the song
-     * @param  {string} options - Options
-     * @return {object}
+     * @memberof Pulse#
+     * @method Pulse#loadBufferFromURI
+     * @description loadBufferFromURI description
+     * @param {string} uri
+     * @returns {boolean} Options with default values
      */
-    Pulse.prototype.loadBufferFromURI = function(uri, options) {
+     Pulse.prototype.loadBufferFromURI = function(uri) {
 
         if(this.audioContext === null) {
             return false;
@@ -173,11 +194,29 @@
         return true;
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#_requestProgress
+     * @access private
+     * @description _requestProgress description
+     * @param {RequestEvent} event The request event object
+     * @param {XmlHttpRequest} request The XHR object
+     * @returns {void}
+     */
     Pulse.prototype._requestProgress = function(event, request) {
         this.status = this.REQUEST_PROGRESS;
         this.options.onRequestProgress(this, request, event);
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#_requestLoad
+     * @access private
+     * @description _requestLoad description
+     * @param {RequestEvent} event The request event object
+     * @param {XmlHttpRequest} request The XHR object
+     * @returns {void}
+     */
     Pulse.prototype._requestLoad = function(event, request) {
         if(request.readyState === request.DONE) {
             this.buffer = request.response;
@@ -189,16 +228,40 @@
         }
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#_requestError
+     * @access private
+     * @description _requestError description
+     * @param {RequestEvent} event The request event object
+     * @param {XmlHttpRequest} request The XHR object
+     * @returns {void}
+     */
     Pulse.prototype._requestError = function(event, request) {
         this.status = this.REQUEST_ERROR;
         this.options.onRequestError(this, request, event);
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#_requestAbort
+     * @access private
+     * @description _requestAbort description
+     * @param {RequestEvent} event The request event object
+     * @param {XmlHttpRequest} request The XHR object
+     * @returns {void}
+     */
     Pulse.prototype._requestAbort = function(event, request) {
         this.status = this.REQUEST_ABORT;
         this.options.onRequestAbort(this, request, event);
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#process
+     * @description Decode audio data
+     * @return {void}
+     */
     Pulse.prototype.process = function() {
         this.audioContext.decodeAudioData(
             this.buffer,
@@ -209,10 +272,16 @@
         );
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#getOfflineContext
+     * @description description
+     * @return {OfflineAudioContext}
+     */
     Pulse.prototype.getOfflineContext = function(buffer) {
         var offlineContext = new global.OfflineAudioContext(1, buffer.length, buffer.sampleRate),
-            source = offlineContext.createBufferSource(),
-            filter = offlineContext.createBiquadFilter();
+        source = offlineContext.createBufferSource(),
+        filter = offlineContext.createBiquadFilter();
 
         source.buffer = buffer;
         filter.type = "lowpass";
@@ -224,6 +293,12 @@
         return offlineContext;
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#processCallback
+     * @description description
+     * @return {void}
+     */
     Pulse.prototype.processCallback = function(buffer) {
 
         var offlineContext = self.getOfflineContext(buffer);
@@ -238,11 +313,17 @@
         offlineContext.startRendering();
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#getChannelDataMinMax
+     * @description description
+     * @return {object}
+     */
     Pulse.prototype.getChannelDataMinMax = function(channelData) {
         var length = channelData.length,
-            min = channelData[0],
-            max = channelData[0],
-            j;
+        min = channelData[0],
+        max = channelData[0],
+        j;
 
         for(j = 1; j < length; j++) {
             min = Math.min(min, channelData[j]);
@@ -255,10 +336,16 @@
         };
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#getSignificantPeaks
+     * @description description
+     * @return {object}
+     */
     Pulse.prototype.getSignificantPeaks = function(event) {
 
         var channelData = this.renderedBuffer.getChannelData(0),
-            limit = this.getChannelDataMinMax(channelData),
+        limit = this.getChannelDataMinMax(channelData),
             intervalMin = 230, // ms, max tempo = 260 bpm
             amplitude = Math.abs(limit.min) + Math.abs(limit.max),
             maxThreshold = limit.min + amplitude * 0.9, // 90% uppest beats
@@ -275,15 +362,15 @@
         while (
             threshold >= minThreshold &&
             significantPeaks.length <= duration
-        ) {
+            ) {
             j = 0;
-            for(; j < length; j++) {
-                if (channelData[j] > threshold) {
-                    significantPeaks.push(j);
+        for(; j < length; j++) {
+            if (channelData[j] > threshold) {
+                significantPeaks.push(j);
 
-                    j += acuracy;
-                }
+                j += acuracy;
             }
+        }
             threshold -= 0.05; // -5% every interation
         }
 
@@ -307,24 +394,30 @@
         return significantPeaks;
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#getBeat
+     * @description description
+     * @return {object}
+     */
     Pulse.prototype.getBeat = function(significantPeaks) {
         // count interval durations between each peak
         var intervals = {},
-            square = 0,
-            count = 0,
-            max = 0,
-            ms = 0,
-            msBetween = [],
-            k,
-            i,
-            j,
-            avgCountInterval,
-            referenceMs,
-            sumMargins = [],
-            minMarginIndex = 0,
-            minMargin,
-            tempo,
-            tempoMs;
+        square = 0,
+        count = 0,
+        max = 0,
+        ms = 0,
+        msBetween = [],
+        k,
+        i,
+        j,
+        avgCountInterval,
+        referenceMs,
+        sumMargins = [],
+        minMarginIndex = 0,
+        minMargin,
+        tempo,
+        tempoMs;
 
         for (i = 1; i < significantPeaks.length; i++) {
             for (j = 0; j < i; j++) {
@@ -394,33 +487,39 @@
         };
     };
 
+    /**
+     * @memberof Pulse#
+     * @method Pulse#getExtrapolatedPeaks
+     * @description description
+     * @return {object}
+     */
     Pulse.prototype.getExtrapolatedPeaks = function(renderedBuffer, significantPeaks, beat) {
         var playbackTempo = [],
-            i,
-            j,
-            chainedKeys = [],
-            chainedKeysMax = [],
-            errorMs = 2,
-            extrapolatedPeaks = [],
-            minChained,
-            maxChained;
+        i,
+        j,
+        chainedKeys = [],
+        chainedKeysMax = [],
+        errorMs = 2,
+        extrapolatedPeaks = [],
+        minChained,
+        maxChained;
 
         for (i = 0; i < significantPeaks.length; i++) {
             for (j = 0; j < i; j++) {
                 if(significantPeaks[i] - significantPeaks[j] == beat.ms) {
-                   playbackTempo.push(significantPeaks[i]);
-                   playbackTempo.push(significantPeaks[j]);
-                }
-            }
-        }
+                 playbackTempo.push(significantPeaks[i]);
+                 playbackTempo.push(significantPeaks[j]);
+             }
+         }
+     }
 
-        playbackTempo.sort(function(a, b) {
-            return a - b;
-        });
+     playbackTempo.sort(function(a, b) {
+        return a - b;
+    });
 
-        playbackTempo = playbackTempo.filter(function(item, pos) {
-            return (!pos || item > playbackTempo[pos - 1] + 230) && item > 0;
-        });
+     playbackTempo = playbackTempo.filter(function(item, pos) {
+        return (!pos || item > playbackTempo[pos - 1] + 230) && item > 0;
+    });
 
         // detect chained
         for (i = 0; i < playbackTempo.length - 1; i++) {
@@ -454,6 +553,7 @@
         return extrapolatedPeaks;
     };
 
+    // bind to global
     global.Pulse = Pulse;
 
 }(window));
