@@ -11,7 +11,7 @@ module.exports = function(grunt) {
         uglify: {
             js_minify: {
                 files: {
-                    'pulse.min.js': ['src/**/*.js']
+                    'bin/pulse.min.js': ['src/**/*.js']
                 }
             }
         },
