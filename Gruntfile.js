@@ -2,11 +2,11 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['Gruntfile.js', 'src/**/*.js']
+            files: ['Gruntfile.js', 'jsdoc.json', 'src/**/*.js']
         },
         watch: {
             files: ['<%= jshint.files %>'],
-            tasks: ['jshint', 'uglify:js_minify', 'jsdoc']
+            tasks: ['jshint', 'uglify:js_minify', 'jsdoc', 'jsdoc2md']
         },
         uglify: {
             js_minify: {
@@ -17,10 +17,16 @@ module.exports = function(grunt) {
         },
         jsdoc: {
             dist: {
-                src: ['src/*.js'],
-                    options: {
+                src: ['src/**/*.js'],
+                options: {
                     destination: 'doc'
                 }
+            }
+        },
+        jsdoc2md: {
+            oneOutputFile: {
+                src: "src/**/*.js",
+                dest: "doc/documentation.md"
             }
         }
     });
@@ -29,6 +35,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks("grunt-jsdoc-to-markdown");
 
     grunt.registerTask('default', ['jshint', 'uglify', 'jsdoc']);
 };

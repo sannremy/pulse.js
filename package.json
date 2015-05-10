@@ -6,14 +6,14 @@
     "doc": "doc",
     "test": "test"
   },
-  "dependencies": {
+  "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-uglify": "^0.9.1",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-jsdoc": "^0.5.8"
+    "grunt-jsdoc": "^0.5.8",
+    "grunt-jsdoc-to-markdown": "^1.1.1"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/srchea/pulse.js.git"
