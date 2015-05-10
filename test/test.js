@@ -1,18 +1,18 @@
 var pulse = new Pulse({
-	onComplete: function(event, pulse) {
-		var extrapolatedPeaks = pulse.getExtrapolatedPeaks(
-			pulse.renderedBuffer,
-			pulse.significantPeaks,
-			pulse.beat
-		);
+    onComplete: function(event, pulse) {
+        var extrapolatedPeaks = pulse.getExtrapolatedPeaks(
+            pulse.renderedBuffer,
+            pulse.significantPeaks,
+            pulse.beat
+        );
 
-		console.log(extrapolatedPeaks);
-	},
-	onRequestProgress:function(pulse, request, requestEvent) {
+        console.log(extrapolatedPeaks);
+    },
+    onRequestProgress:function(pulse, request, requestEvent) {
 
-	},
+    },
     onRequestSuccess: function(pulse, request, requestEvent) {
-    	//console.log(pulse);
+        //console.log(pulse);
     },
     onRequestAbort: function(pulse, request, requestEvent) {
         
