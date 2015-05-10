@@ -207,7 +207,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_getAudioContext
      * @access private
      * @description Get the audio context of the browser.
@@ -224,7 +223,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#getDefaultOptions
      * @description Get the default options.
      * @returns {object} Options with default values
@@ -242,7 +240,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#loadBufferFromURI
      * @description Load a song from an URI.
      * @param {string} uri The URI of the song.
@@ -281,7 +278,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_requestProgress
      * @access private
      * @description _requestProgress description
@@ -295,7 +291,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_requestLoad
      * @access private
      * @description The method is called in the request load event.
@@ -315,7 +310,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_requestError
      * @access private
      * @description The method is called in the request error event.
@@ -329,7 +323,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_requestAbort
      * @access private
      * @description The method is called in the request abort event.
@@ -343,7 +336,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_process
      * @access private
      * @description Process to decode audio data, if fails it sends a DECODING_ERROR status.
@@ -360,7 +352,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_getOfflineContext
      * @access private
      * @description Get the offline audio context and set nodes and filters.
@@ -382,7 +373,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_processCallback
      * @access private
      * @description Callback after audio data is decoded.
@@ -405,7 +395,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#_getChannelDataMinMax
      * @description Get the min/max of a channel data.
      * @return {object}
@@ -428,7 +417,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#getSignificantPeaks
      * @description Get the significant peaks.
      * @return {object}
@@ -486,7 +474,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#getBeat
      * @description Get the beat in milliseconds and beat per minute.
      * @return {object}
@@ -579,7 +566,6 @@
     };
 
     /**
-     * @memberof Pulse#
      * @method Pulse#getExtrapolatedPeaks
      * @description Get the extrapolated peaks regarding the computed beat.
      * @return {object}

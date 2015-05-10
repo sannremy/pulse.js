@@ -18,6 +18,12 @@ Beats per minute (BPM) automatic detection with Web Audio API.
   * [.WEB_AUDIO_API_NOT_SUPPORTED](#Pulse#WEB_AUDIO_API_NOT_SUPPORTED) : <code>number</code>
   * [.status](#Pulse#status) : <code>number</code>
   * [.options](#Pulse#options) : <code>object</code>
+  * [.getDefaultOptions()](#Pulse#getDefaultOptions) ⇒ <code>object</code>
+  * [.loadBufferFromURI(uri)](#Pulse#loadBufferFromURI) ⇒ <code>boolean</code>
+  * [._getChannelDataMinMax()](#Pulse#_getChannelDataMinMax) ⇒ <code>object</code>
+  * [.getSignificantPeaks()](#Pulse#getSignificantPeaks) ⇒ <code>object</code>
+  * [.getBeat()](#Pulse#getBeat) ⇒ <code>object</code>
+  * [.getExtrapolatedPeaks()](#Pulse#getExtrapolatedPeaks) ⇒ <code>object</code>
 
 <a name="new_Pulse_new"></a>
 ### new Pulse(options)
@@ -103,3 +109,40 @@ Options available for Pulse.
 
 **Kind**: instance property of <code>[Pulse](#Pulse)</code>  
 **Default**: <code>{}</code>  
+<a name="Pulse#getDefaultOptions"></a>
+### pulse.getDefaultOptions() ⇒ <code>object</code>
+Get the default options.
+
+**Kind**: instance method of <code>[Pulse](#Pulse)</code>  
+**Returns**: <code>object</code> - Options with default values  
+<a name="Pulse#loadBufferFromURI"></a>
+### pulse.loadBufferFromURI(uri) ⇒ <code>boolean</code>
+Load a song from an URI.
+
+**Kind**: instance method of <code>[Pulse](#Pulse)</code>  
+**Returns**: <code>boolean</code> - Always true but the request event has more information.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uri | <code>string</code> | The URI of the song. |
+
+<a name="Pulse#_getChannelDataMinMax"></a>
+### pulse._getChannelDataMinMax() ⇒ <code>object</code>
+Get the min/max of a channel data.
+
+**Kind**: instance method of <code>[Pulse](#Pulse)</code>  
+<a name="Pulse#getSignificantPeaks"></a>
+### pulse.getSignificantPeaks() ⇒ <code>object</code>
+Get the significant peaks.
+
+**Kind**: instance method of <code>[Pulse](#Pulse)</code>  
+<a name="Pulse#getBeat"></a>
+### pulse.getBeat() ⇒ <code>object</code>
+Get the beat in milliseconds and beat per minute.
+
+**Kind**: instance method of <code>[Pulse](#Pulse)</code>  
+<a name="Pulse#getExtrapolatedPeaks"></a>
+### pulse.getExtrapolatedPeaks() ⇒ <code>object</code>
+Get the extrapolated peaks regarding the computed beat.
+
+**Kind**: instance method of <code>[Pulse](#Pulse)</code>  
