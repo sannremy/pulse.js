@@ -424,7 +424,7 @@
     Pulse.prototype.getSignificantPeaks = function(event) {
 
         var channelData = this.renderedBuffer.getChannelData(0),
-        limit = this._getChannelDataMinMax(channelData),
+            limit = this._getChannelDataMinMax(channelData),
             intervalMin = 230, // ms, max tempo = 260 bpm
             amplitude = Math.abs(limit.min) + Math.abs(limit.max),
             maxThreshold = limit.min + amplitude * 0.9, // 90% uppest beats
@@ -518,6 +518,10 @@
 
         avgCountInterval = Math.sqrt(square / count);
 
+        /**
+         * TODO this needs to be improved
+         */
+
         // get max beats between an interval (1000 ms)
         for (i in intervals) {
             if (intervals[i] > avgCountInterval) {
@@ -537,6 +541,10 @@
             }
         }
 
+        /**
+         * TODO this needs to be improved
+         */
+
         // compare ms with all other time beats
         referenceMs = msBetween.slice(0, 3);
         for (i = 0; i < referenceMs.length; i++) {
@@ -545,6 +553,10 @@
                 sumMargins[i] += msBetween[j].ms % referenceMs[i].ms;
             }
         }
+
+        /**
+         * TODO this needs to be improved
+         */
 
         minMarginIndex = 0;
         minMargin = sumMargins[minMarginIndex];
