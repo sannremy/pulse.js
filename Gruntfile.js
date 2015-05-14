@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         jsdoc2md: {
             oneOutputFile: {
                 src: "src/**/*.js",
-                dest: "doc/documentation.md"
+                dest: "doc/README.md"
             }
         }
     });
@@ -37,5 +37,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks("grunt-jsdoc-to-markdown");
 
-    grunt.registerTask('default', ['jshint', 'uglify', 'jsdoc']);
+    grunt.registerTask('default', ['jshint', 'uglify', 'jsdoc', 'jsdoc2md']);
 };
