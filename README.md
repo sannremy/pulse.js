@@ -39,7 +39,7 @@ This is a screenshot of a game based on rhythms like ["Dance Dance Revolution"](
     <a href="http://i.imgur.com/nKaGrWm.png">
        <img src="http://i.imgur.com/nKaGrWm.png" width="395">
     </a>
-<figcaption>*Mark Ronson - Uptown Funk feat. Bruno Mars*</figcaption>
+<br /><figcaption>*Mark Ronson - Uptown Funk feat. Bruno Mars*</figcaption>
 </figure>
 </p>
 
@@ -48,7 +48,7 @@ This is a screenshot of a game based on rhythms like ["Dance Dance Revolution"](
     <a href="http://i.imgur.com/X98o1qj.png">
        <img src="http://i.imgur.com/X98o1qj.png" width="395">
     </a>
-<figcaption>*Avicii - The Nights*</figcaption>
+<br /><figcaption>*Avicii - The Nights*</figcaption>
 </figure>
 </p>
 
@@ -57,7 +57,7 @@ This is a screenshot of a game based on rhythms like ["Dance Dance Revolution"](
     <a href="http://i.imgur.com/BXuispo.png">
        <img src="http://i.imgur.com/BXuispo.png" width="395">
     </a>
-<figcaption>*Avicii - The Nights*</figcaption>
+<br /><figcaption>*Avicii - The Nights*</figcaption>
 </figure>
 </p>
 
