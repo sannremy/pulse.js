@@ -86,3 +86,4 @@ References
 
  * [Beat Detection Using JavaScript and the Web Audio API](http://tech.beatport.com/2014/web-audio/beat-detection-using-web-audio/)
  * [Calculating BPM using Javascript and the Spotify Web API](http://jmperezperez.com/beats-audio-api/)
+ * [Générer un "Dance Dance Revolution" avec Web Audio API (fr)](http://www.slideshare.net/srchea/gnrer-un-dance-dance-revolution-avec-web)
