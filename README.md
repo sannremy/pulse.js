@@ -3,6 +3,11 @@ Pulse.js
 
 This library aims to get the BPM (beat per minute) automatically with Web Audio API.
 
+Installation
+------------
+
+To install Pulse.js with bower: `bower install pulsejs`
+
 Usage
 -----
 
