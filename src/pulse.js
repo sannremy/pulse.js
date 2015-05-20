@@ -2,6 +2,11 @@
 
     "use strict";
 
+    if(global.Pulse) {
+        console.error("Pulse is already defined");
+        return;
+    }
+
     var self,
 
     /**
