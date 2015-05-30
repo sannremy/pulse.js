@@ -3,7 +3,7 @@
     "use strict";
 
     if(global.Pulse) {
-        console.error("Pulse is already defined");
+        global.console.error("Pulse is already defined");
         return;
     }
 
@@ -71,83 +71,86 @@
 
         /**
          * @name Pulse#REQUEST_PROGRESS
-         * @description Status when a request is in progress.
+         * @description State when a request is in progress.
          * @type {number}
          * @readonly
          */
-        Object.defineProperty(this, 'REQUEST_PROGRESS', {
+        Object.defineProperty(this, "REQUEST_PROGRESS", {
             value: 101,
             writable: false
         });
 
         /**
          * @name Pulse#REQUEST_LOAD
-         * @description Status when a request is downloading.
+         * @description State when a request is downloading.
          * @type {number}
          * @readonly
          */
-        Object.defineProperty(this, 'REQUEST_LOAD', {
+        Object.defineProperty(this, "REQUEST_LOAD", {
             value: 102,
             writable: false
         });
 
         /**
          * @name Pulse#REQUEST_ERROR
-         * @description Status when a request has an error.
+         * @description State when a request has an error.
          * @type {number}
          * @readonly
          */
-        Object.defineProperty(this, 'REQUEST_ERROR', {
+        Object.defineProperty(this, "REQUEST_ERROR", {
             value: 1102,
             writable: false
         });
 
         /**
          * @name Pulse#REQUEST_ABORT
-         * @description Status when a request is aborted.
+         * @description State when a request is aborted.
          * @type {number}
          * @readonly
          */
-        Object.defineProperty(this, 'REQUEST_ABORT', {
+        Object.defineProperty(this, "REQUEST_ABORT", {
             value: 104,
             writable: false
         });
 
         /**
          * @name Pulse#WEB_AUDIO_API_NOT_SUPPORTED
-         * @description Status when the browser does not support Web Audio API.
+         * @description State when the browser does not support Web Audio API.
          * @type {number}
          * @readonly
          */
-        Object.defineProperty(this, 'WEB_AUDIO_API_NOT_SUPPORTED', {
+        Object.defineProperty(this, "WEB_AUDIO_API_NOT_SUPPORTED", {
             value: 1001,
             writable: false
         });
+
+        // init state
+        var state;
 
         var notifier = Object.getNotifier(this),
             changeIndex;
 
         /**
-         * @name Pulse#status
-         * @description The status of a Pulse operation.
+         * @name Pulse#state
+         * @description The state of a Pulse operation.
          * @type {number}
          */
-        Object.defineProperty(this, 'status', {
+        Object.defineProperty(this, "state", {
             get: function() {
-                return parseInt(status, 10);
+                return parseInt(state, 10);
             },
             set: function(s) {
-                if (s == status) {
+                if (s == state) {
                     return;
                 }
 
                 notifier.notify({
-                    type: 'update',
-                    name: 'status',
+                    type: "update",
+                    name: "state",
                     oldValue: s
                 });
 
-                status = s;
+                state = s;
             }
         });
 
@@ -157,7 +160,7 @@
          * @type {object}
          * @default {}
          */
-        Object.defineProperty(this, 'options', {
+        Object.defineProperty(this, "options", {
             get: function() {
                 return options || this.getDefaultOptions();
             },
@@ -180,33 +183,37 @@
         Object.observe(this, function(changes) {
             for(changeIndex = 0; changeIndex < changes.length; changeIndex++) {
                 if(
-                    changes[changeIndex].type === 'update' &&
-                    changes[changeIndex].name === 'status' &&
-                    changes[changeIndex].lastValue != self.status
+                    changes[changeIndex].type === "update" &&
+                    changes[changeIndex].name === "state" &&
+                    changes[changeIndex].lastValue != self.state
                     ) {
-                    switch(self.status) {
+                    switch(self.state) {
+                        case self.READY :
+                        global.console.log("READY");
+                        break;
+
                         case self.WEB_AUDIO_API_NOT_SUPPORTED :
-                        console.error("WEB_AUDIO_API_NOT_SUPPORTED");
+                        global.console.error("WEB_AUDIO_API_NOT_SUPPORTED");
                         break;
 
                         case self.REQUEST_PROGRESS :
-                        console.log("REQUEST_PROGRESS");
+                        global.console.log("REQUEST_PROGRESS");
                         break;
 
                         case self.REQUEST_LOAD :
-                        console.log("REQUEST_LOAD");
+                        global.console.log("REQUEST_LOAD");
                         break;
 
                         case self.REQUEST_ERROR :
-                        console.error("REQUEST_ERROR");
+                        global.console.error("REQUEST_ERROR");
                         break;
 
                         case self.REQUEST_ABORT :
-                        console.error("REQUEST_ABORT");
+                        global.console.error("REQUEST_ABORT");
                         break;
 
                         default :
-                        console.error("STATUS NOT IMPLEMENTED");
+                        global.console.error("STATE NOT IMPLEMENTED");
                         break;
                     }
                 }
@@ -225,7 +232,7 @@
             global.AudioContext = global.AudioContext || global.webkitAudioContext;
             return new global.AudioContext();
         } catch(e) {
-            this.status = this.WEB_AUDIO_API_NOT_SUPPORTED;
+            this.state = this.WEB_AUDIO_API_NOT_SUPPORTED;
             return null;
         }
     };
@@ -294,7 +301,7 @@
      * @returns {void}
      */
     Pulse.prototype._requestProgress = function(event, request) {
-        this.status = this.REQUEST_PROGRESS;
+        this.state = this.REQUEST_PROGRESS;
         this.options.onRequestProgress(this, request, event);
     };
 
@@ -309,7 +316,7 @@
     Pulse.prototype._requestLoad = function(event, request) {
         if(request.readyState === request.DONE) {
             this.buffer = request.response;
-            this.status = this.REQUEST_LOAD;
+            this.state = this.REQUEST_LOAD;
             this.options.onRequestSuccess(this, request, event);
             this._process();
         } else {
@@ -326,7 +333,7 @@
      * @returns {void}
      */
     Pulse.prototype._requestError = function(event, request) {
-        this.status = this.REQUEST_ERROR;
+        this.state = this.REQUEST_ERROR;
         this.options.onRequestError(this, request, event);
     };
 
@@ -339,7 +346,7 @@
      * @returns {void}
      */
     Pulse.prototype._requestAbort = function(event, request) {
-        this.status = this.REQUEST_ABORT;
+        this.state = this.REQUEST_ABORT;
         this.options.onRequestAbort(this, request, event);
     };
 
@@ -353,8 +360,8 @@
         this.audioContext.decodeAudioData(
             this.buffer,
             this._processCallback,
-            function(error) {
-                self.status = self.DECODING_ERROR;
+            function() {
+                self.state = self.DECODING_ERROR;
             }
         );
     };
@@ -429,7 +436,7 @@
      * @description Get the significant peaks.
      * @return {object}
      */
-    Pulse.prototype.getSignificantPeaks = function(event) {
+    Pulse.prototype.getSignificantPeaks = function() {
 
         var channelData = this.renderedBuffer.getChannelData(0),
             limit = this._getChannelDataMinMax(channelData),

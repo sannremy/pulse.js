@@ -16,7 +16,7 @@ Beats per minute (BPM) automatic detection with Web Audio API.
   * [.REQUEST_ERROR](#Pulse#REQUEST_ERROR) : <code>number</code>
   * [.REQUEST_ABORT](#Pulse#REQUEST_ABORT) : <code>number</code>
   * [.WEB_AUDIO_API_NOT_SUPPORTED](#Pulse#WEB_AUDIO_API_NOT_SUPPORTED) : <code>number</code>
-  * [.status](#Pulse#status) : <code>number</code>
+  * [.state](#Pulse#state) : <code>number</code>
   * [.options](#Pulse#options) : <code>object</code>
   * [.getDefaultOptions()](#Pulse#getDefaultOptions) ⇒ <code>object</code>
   * [.loadBufferFromURI(uri)](#Pulse#loadBufferFromURI) ⇒ <code>boolean</code>
@@ -70,37 +70,37 @@ The computed beat including milliseconds and beat per minute.
 **Default**: <code>{ms: null, bpm: null};</code>  
 <a name="Pulse#REQUEST_PROGRESS"></a>
 ### pulse.REQUEST_PROGRESS : <code>number</code>
-Status when a request is in progress.
+State when a request is in progress.
 
 **Kind**: instance property of <code>[Pulse](#Pulse)</code>  
 **Read only**: true  
 <a name="Pulse#REQUEST_LOAD"></a>
 ### pulse.REQUEST_LOAD : <code>number</code>
-Status when a request is downloading.
+State when a request is downloading.
 
 **Kind**: instance property of <code>[Pulse](#Pulse)</code>  
 **Read only**: true  
 <a name="Pulse#REQUEST_ERROR"></a>
 ### pulse.REQUEST_ERROR : <code>number</code>
-Status when a request has an error.
+State when a request has an error.
 
 **Kind**: instance property of <code>[Pulse](#Pulse)</code>  
 **Read only**: true  
 <a name="Pulse#REQUEST_ABORT"></a>
 ### pulse.REQUEST_ABORT : <code>number</code>
-Status when a request is aborted.
+State when a request is aborted.
 
 **Kind**: instance property of <code>[Pulse](#Pulse)</code>  
 **Read only**: true  
 <a name="Pulse#WEB_AUDIO_API_NOT_SUPPORTED"></a>
 ### pulse.WEB_AUDIO_API_NOT_SUPPORTED : <code>number</code>
-Status when the browser does not support Web Audio API.
+State when the browser does not support Web Audio API.
 
 **Kind**: instance property of <code>[Pulse](#Pulse)</code>  
 **Read only**: true  
-<a name="Pulse#status"></a>
-### pulse.status : <code>number</code>
-The status of a Pulse operation.
+<a name="Pulse#state"></a>
+### pulse.state : <code>number</code>
+The state of a Pulse operation.
 
 **Kind**: instance property of <code>[Pulse](#Pulse)</code>  
 <a name="Pulse#options"></a>
