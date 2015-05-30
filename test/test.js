@@ -1,3 +1,7 @@
+var getTestFile = function() {
+    return "assets/song.mp3?" + Math.random();
+};
+
 QUnit.test("Pulse options returning types", function(assert) {
 
     assert.ok(function() {
@@ -36,100 +40,93 @@ QUnit.test("Pulse options returning types", function(assert) {
     }, 'removeDuplicates is a boolean');
 });
 
-QUnit.test("Pulse options callbacks", function(assert) {
+QUnit.test("Pulse basic load", function(assert) {
 
     assert.ok(function() {
         var pulse = new Pulse();
-        return pulse.loadBufferFromURI("assets/song.mp3");
+        return pulse.loadBufferFromURI(getTestFile());
     }, 'loadBufferFromURI works as expected and Web Audio API is supported by the browser');
-
-    // var done = assert.async();
-    // var pulse = new Pulse({
-    //     onRequestSuccess: function(event, request) {
-    //         assert.ok(function() {
-    //             return true;
-    //         }, 'ok');
-    //         done();
-    //     }
-    // });
-
-    // pulse.loadBufferFromURI("assets/song.mp3");
-
 });
 
-QUnit.test( "assert.async() test", function( assert ) {
-  var done = assert.async();
+var requestCallbacks = [
+    'onRequestSuccess',
+    'onRequestProgress'
+];
 
-  var input = document.activeElement;
+for(var i = 0; i < requestCallbacks.length; i++) {
+    (function(callback) {
+        QUnit.test("Pulse " + callback + " successful request callback", function(assert) {
+            assert.expect(1);
+            var done = assert.async();
+            var options = {};
+            options[callback] = function(pulse, request, requestEvent) {
+                assert.ok(true, callback + ' returns expected parameters');
+                done();
+            };
 
-  var requestSuccess = function(event, request) {
-    assert.equal( document.activeElement, input, "Input was focused" );
-    done();
-  };
+            var pulse = new Pulse(options);
+            pulse.loadBufferFromURI(getTestFile());
+        });
+    })(requestCallbacks[i]);
+}
 
-  var pulse = new Pulse({
-    onRequestSuccess: function(event, request) {
-        assert.equal( document.activeElement, input, "Input was focused" );
-        done();
-      }
-  });
+var errorCallbacks = [
+    'onRequestAbort',
+   // 'onRequestError' // TODO
+];
 
-  pulse.loadBufferFromURI("assets/song.mp3");
+for(var i = 0; i < errorCallbacks.length; i++) {
+    (function(callback) {
+        QUnit.test("Pulse " + callback + " failed callback", function(assert) {
+            assert.expect(1);
+            var done = assert.async();
+            var options = {
+                onRequestProgress: function(pulse, request, requestEvent) {
+                    request.abort();
+                }
+            };
+            options[callback] = function() {
+                assert.ok(true, callback + ' returns expected parameters');
+                done();
+            };
 
+            var pulse = new Pulse(options);
+            pulse.loadBufferFromURI('not/found/' + getTestFile());
+        });
+    })(errorCallbacks[i]);
+}
 
-  // var input = document.activeElement;
-  // setTimeout(function() {
-  //   assert.equal( document.activeElement, input, "Input was focused" );
-  //   done();
-  // });
+QUnit.test("Pulse methods", function(assert) {
+    assert.expect(4);
+    var done = assert.async();
+
+    var pulse = new Pulse({
+        onComplete: function(event, pulse) {
+            var extrapolatedPeaks = pulse.getExtrapolatedPeaks(
+                pulse.renderedBuffer,
+                pulse.significantPeaks,
+                pulse.beat
+            );
+
+            assert.ok(function() {
+                return typeof pulse.renderedBuffer === 'object';
+            }, 'pulse.renderedBuffer is an object');
+            
+            assert.ok(function() {
+                return typeof pulse.significantPeaks === 'object';
+            }, 'pulse.significantPeaks is an object');
+
+            assert.ok(function() {
+                return typeof pulse.beat.ms === 'number' && typeof pulse.beat.bpm === 'number';
+            }, 'pulse.beat has the expected object');
+            
+            assert.ok(function() {
+                return typeof extrapolatedPeaks === 'object';
+            }, 'pulse.getExtrapolatedPeaks returns an object');
+
+            done();
+        }
+    });
+
+    pulse.loadBufferFromURI(getTestFile());
 });
-
-// QUnit.test( "a Promise-returning test", function( assert ) {
-//  var done = assert.async();
-
-//  setTimeout(function() {
-//   var pulse = new Pulse();
-//     pulse.onComplete = function(event, pulse) {
-//         var extrapolatedPeaks = pulse.getExtrapolatedPeaks(
-//             pulse.renderedBuffer,
-//             pulse.significantPeaks,
-//             pulse.beat
-//         );
-
-//         assert.ok(function() {
-//             return typeof pulse.renderedBuffer === 'object';
-//         }, 'pulse.renderedBuffer is an object');
-//         done();
-//     };
-//     pulse.loadBufferFromURI("assets/song.mp3");
-//   }, 0);
-// });
-
-/*var pulse = new Pulse({
-    onComplete: function(event, pulse) {
-        var extrapolatedPeaks = pulse.getExtrapolatedPeaks(
-            pulse.renderedBuffer,
-            pulse.significantPeaks,
-            pulse.beat
-        );
-
-        console.log(pulse.beat);
-    },
-    onRequestProgress:function(pulse, request, requestEvent) {
-
-    },
-    onRequestSuccess: function(pulse, request, requestEvent) {
-        //console.log(pulse);
-    },
-    onRequestAbort: function(pulse, request, requestEvent) {
-        
-    },
-    onRequestError: function(pulse, request, requestEvent) {
-        //console.log(request.status);
-    },
-    convertToMilliseconds: true,
-    removeDuplicates: true,
-});
-
-pulse.loadBufferFromURI("assets/song.mp3");
-*/

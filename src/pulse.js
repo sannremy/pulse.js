@@ -125,7 +125,7 @@
         });
 
         var notifier = Object.getNotifier(this),
-        changeIndex;
+            changeIndex;
 
         /**
          * @name Pulse#status
@@ -173,6 +173,9 @@
                 options = o;
             }
         });
+
+        // init options
+        this.options = options;
 
         Object.observe(this, function(changes) {
             for(changeIndex = 0; changeIndex < changes.length; changeIndex++) {
