@@ -72,7 +72,7 @@ for(var i = 0; i < requestCallbacks.length; i++) {
 
 var errorCallbacks = [
     'onRequestAbort',
-   // 'onRequestError' // TODO
+   //'onRequestError' // TODO
 ];
 
 for(var i = 0; i < errorCallbacks.length; i++) {
