@@ -74,8 +74,9 @@ The [full documentation](https://github.com/srchea/pulse.js/blob/master/doc/READ
 Contributions
 -------------
 
- * Install all grunt tasks: `npm install`
- * Then run: `grunt watch`
+ * Install all grunt tasks: `npm install`.
+ * Then run: `grunt watch`.
+ * Write your tests and make your changes.
  * Enjoy :-) and please do not forget comments.
 
 Of course, all contributions are welcome.
