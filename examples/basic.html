@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Basic example</title>
+</head>
+<body>
+    <button id="button">Click to start</button>
+    <pre id="output"></pre>
+    <script type="text/javascript" src="../bin/pulse.min.js"></script>
+    <script type="text/javascript">
+        var button = document.getElementById("button");
+        var output = document.getElementById("output");
+
+        button.addEventListener("click", function () {
+            // http://www.tannerhelland.com/dmusic/AMemoryAway.ogg
+            var uri = "AMemoryAway.ogg";
+            var pulse = new Pulse({
+              
+                // when Pulse has finished to compute main data: beat, significant peaks...
+                onComplete: function(event, pulse) {
+                    var extrapolatedPeaks = pulse.getExtrapolatedPeaks(
+                        pulse.renderedBuffer,
+                        pulse.significantPeaks,
+                        pulse.beat
+                    );
+
+                    // beat (ms and bpm properties)
+                    output.innerHTML = JSON.stringify(pulse.beat)
+                        + "<br /><br />"
+                        // extrapolated peaks
+                        + JSON.stringify(extrapolatedPeaks);
+                }
+            });
+
+            pulse.loadBufferFromURI(uri);
+        });
+    </script>
+</body>
+</html>
