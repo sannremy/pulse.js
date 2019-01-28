@@ -1,6 +1,6 @@
 {
   "name": "pulse.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Beats per minute (BPM) automatic detection with Web Audio API.",
   "directories": {
     "doc": "doc",
