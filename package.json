@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/srchea/pulse.js.git"
+    "url": "https://github.com/sannremy/pulse.js.git"
   },
   "keywords": [
     "music",
@@ -30,7 +30,7 @@
   "author": "Sann-Remy Chea",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/srchea/pulse.js/issues"
+    "url": "https://github.com/sannremy/pulse.js/issues"
   },
-  "homepage": "https://github.com/srchea/pulse.js"
+  "homepage": "https://github.com/sannremy/pulse.js"
 }
