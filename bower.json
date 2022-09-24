@@ -1,9 +1,9 @@
 {
   "name": "pulsejs",
   "version": "0.1.1",
-  "homepage": "https://github.com/srchea/pulse.js",
+  "homepage": "https://github.com/sannremy/pulse.js",
   "authors": [
-    "Sann-Remy Chea <src@srchea.com>"
+    "Sann-Remy Chea <hello@sannremy.com>"
   ],
   "description": "Beats per minute (BPM) automatic detection with Web Audio API.",
   "main": "bin/pulse.min.js",
